@@ -15,6 +15,4 @@ updates:
     open-pull-requests-limit: 1
     labels:
     - "nuget"
-    - "dependencies"
-    - "update"
     - "auto"
