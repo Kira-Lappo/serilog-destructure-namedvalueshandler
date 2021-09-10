@@ -24,15 +24,6 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             // Arrange
             var policy = new NamedValueDestructuringPolicy();
 
-            var logger = new LoggerConfiguration()
-                .Destructure
-                .HandleValues(
-                    p => p
-                        .OmitNames("email", "IBAN")
-                        .OmitFromNamespace("Business.Domain.Secured", "System")
-                        .OmitOfType(typeof(DestructibleEntity)))
-                .CreateLogger();
-
             // Act
             var isDestructured = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
 
