@@ -2,11 +2,13 @@
 {
     public static class MaskingExtensions
     {
+        private const char DefaultMaskChar = '*';
+
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder MaskStringValue(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string name,
             int? visibleCharsAmount = null,
-            char maskChar = '#'
+            char maskChar = DefaultMaskChar
         )
         {
             return namedValuePolicyBuilder.HandleNamedValue<string>(
@@ -15,7 +17,7 @@
                     value?.MaskValue(visibleCharsAmount, maskChar));
         }
 
-        public static string MaskValue(this string value, int? visibleCharsAmount = null, char maskChar = '*')
+        public static string MaskValue(this string value, int? visibleCharsAmount = null, char maskChar = DefaultMaskChar)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
