@@ -1,0 +1,47 @@
+root = true
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+
+[*]
+# Standard properties
+indent_size = 4
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+max_line_length = 160
+
+# Microsoft .NET properties
+csharp_preferred_modifier_order = public, private, protected, internal, new, abstract, virtual, sealed, override, static, readonly, extern, unsafe, volatile, async:suggestion
+csharp_style_var_elsewhere = true:suggestion
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+dotnet_naming_rule.local_constants_rule.import_to_resharper = as_predefined
+dotnet_naming_rule.local_constants_rule.severity = warning
+dotnet_naming_rule.local_constants_rule.style = upper_camel_case_style
+dotnet_naming_rule.local_constants_rule.symbols = local_constants_symbols
+dotnet_naming_rule.unit_test_methods_rule.import_to_resharper = True
+dotnet_naming_rule.unit_test_methods_rule.resharper_description = Unit Test Methods
+dotnet_naming_rule.unit_test_methods_rule.resharper_guid = 588b5f96-1125-469b-aae3-6dad8531155d
+dotnet_naming_rule.unit_test_methods_rule.severity = warning
+dotnet_naming_rule.unit_test_methods_rule.style = upper_camel_case_underscore_tolerant_style
+dotnet_naming_rule.unit_test_methods_rule.symbols = unit_test_methods_symbols
+dotnet_naming_style.upper_camel_case_style.capitalization = pascal_case
+dotnet_naming_style.upper_camel_case_underscore_tolerant_style.capitalization = pascal_case
+dotnet_naming_style.upper_camel_case_underscore_tolerant_style.word_separator = _
+dotnet_naming_symbols.local_constants_symbols.applicable_accessibilities = *
+dotnet_naming_symbols.local_constants_symbols.applicable_kinds = local
+dotnet_naming_symbols.local_constants_symbols.required_modifiers = const
+dotnet_naming_symbols.unit_test_methods_symbols.applicable_accessibilities = local, public
+dotnet_naming_symbols.unit_test_methods_symbols.applicable_kinds =
+dotnet_naming_symbols.unit_test_methods_symbols.resharper_applicable_kinds = test_member
+dotnet_naming_symbols.unit_test_methods_symbols.resharper_required_modifiers = static, instance
+dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:none
+dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary:none
+dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary:none
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
+
+[*.{js,json,csproj,runsettings}]
+indent_size = 2

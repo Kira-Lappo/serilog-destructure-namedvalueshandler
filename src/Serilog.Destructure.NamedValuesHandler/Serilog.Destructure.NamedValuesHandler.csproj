@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackageVersion>0.0.1</PackageVersion>
+    <Authors>Kirill Lappo</Authors>
+    <Description>Additional functionality to handle named values in structured log in a different purposes like masking.</Description>
+    <PackageLicenseUrl>https://www.gnu.org/licenses/gpl-3.0.ru.html</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>serilog,masking,hide,destructure,structured,log</PackageTags>
+    <PackageReleaseNotes>Early development phase</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+
+</Project>

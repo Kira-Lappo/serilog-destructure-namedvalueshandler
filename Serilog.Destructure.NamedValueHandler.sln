@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Destructure.NamedValuesHandler", "src\Serilog.Destructure.NamedValuesHandler\Serilog.Destructure.NamedValuesHandler.csproj", "{8BBDFDBB-9355-46EC-A16B-40E67135C273}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution-items", "solution-items", "{C53A2519-B618-4E2B-A765-F569E865018C}"
+ProjectSection(SolutionItems) = preProject
+	.editorconfig = .editorconfig
+	README.MD = README.MD
+	LICENSE = LICENSE
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2078FFCA-5B82-4001-96B8-25D76795ABF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Destructure.NamedValuesHandler.Tests", "tests\Serilog.Destructure.NamedValuesHandler.Tests\Serilog.Destructure.NamedValuesHandler.Tests.csproj", "{107B7880-4F88-41E0-A1A4-891175C9A294}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8BBDFDBB-9355-46EC-A16B-40E67135C273}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BBDFDBB-9355-46EC-A16B-40E67135C273}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BBDFDBB-9355-46EC-A16B-40E67135C273}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BBDFDBB-9355-46EC-A16B-40E67135C273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{107B7880-4F88-41E0-A1A4-891175C9A294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{107B7880-4F88-41E0-A1A4-891175C9A294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{107B7880-4F88-41E0-A1A4-891175C9A294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{107B7880-4F88-41E0-A1A4-891175C9A294}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{107B7880-4F88-41E0-A1A4-891175C9A294} = {2078FFCA-5B82-4001-96B8-25D76795ABF6}
+	EndGlobalSection
+EndGlobal
