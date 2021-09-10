@@ -14,7 +14,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             new object[] { Enumerable.Empty<int>() },
             new object[] { Environment.NewLine },
             new object[] { Guid.Empty },
-            new object[] { DateTime.UtcNow },
+            new object[] { DateTime.UtcNow }
         };
 
         [Theory]
@@ -26,11 +26,11 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var logger = new LoggerConfiguration()
                 .Destructure
-                    .WithPropertyHandler(p => p
+                .WithPropertyHandler(
+                    p => p
                         .OmitNames("email", "IBAN")
                         .OmitFromNamespace("Business.Domain.Secured", "System")
-                        .OmitOfType(typeof(DestructibleEntity))
-                    )
+                        .OmitOfType(typeof(DestructibleEntity)))
                 .CreateLogger();
 
             // Act

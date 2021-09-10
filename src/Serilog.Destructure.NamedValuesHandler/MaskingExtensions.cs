@@ -17,11 +17,20 @@
 
         public static string MaskValue(this string value, int? visibleCharsAmount = null, char maskChar = '#')
         {
-            if (string.IsNullOrWhiteSpace(value)) return value;
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
 
-            if (!visibleCharsAmount.HasValue) return new string(maskChar, value.Length);
+            if (!visibleCharsAmount.HasValue)
+            {
+                return new string(maskChar, value.Length);
+            }
 
-            if (value.Length <= visibleCharsAmount) return value;
+            if (value.Length <= visibleCharsAmount)
+            {
+                return value;
+            }
 
             return $"{new string(maskChar, value.Length - visibleCharsAmount.Value)}{value[^visibleCharsAmount.Value..]}";
         }

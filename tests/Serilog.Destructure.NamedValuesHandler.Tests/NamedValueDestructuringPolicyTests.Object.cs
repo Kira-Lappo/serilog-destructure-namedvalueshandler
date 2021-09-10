@@ -36,12 +36,13 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             structuredResult.Properties.Should().NotBeEmpty();
             structuredResult.Properties.Should().HaveSameCount(expectedProperties);
 
-            structuredResult.Properties.Select(p => p.Name).Should()
+            structuredResult.Properties.Select(p => p.Name)
+                .Should()
                 .BeEquivalentTo(expectedProperties.Select(p => p.Name));
 
-            structuredResult.Properties.Select(p => p.Value).Should()
+            structuredResult.Properties.Select(p => p.Value)
+                .Should()
                 .BeEquivalentTo(expectedProperties.Select(p => new ScalarValue(p.GetValue(@object))));
         }
-
     }
 }

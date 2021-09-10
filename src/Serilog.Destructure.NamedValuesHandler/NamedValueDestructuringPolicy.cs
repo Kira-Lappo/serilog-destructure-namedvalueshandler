@@ -28,7 +28,8 @@ namespace Serilog.Destructure.NamedValuesHandler
                     result = null;
                     return false;
 
-                default: return TryDestructureObject(value, propertyValueFactory, out result);
+                default:
+                    return TryDestructureObject(value, propertyValueFactory, out result);
             }
         }
 
@@ -120,7 +121,10 @@ namespace Serilog.Destructure.NamedValuesHandler
         private object HandleNamedValue(string name, object value, Type declaringType)
         {
             name = UnifyName(name);
-            if (_namedValueHandlers.TryGetValue(name, out var handler)) handler.Invoke(value, declaringType);
+            if (_namedValueHandlers.TryGetValue(name, out var handler))
+            {
+                handler.Invoke(value, declaringType);
+            }
 
             return value;
         }
@@ -139,9 +143,13 @@ namespace Serilog.Destructure.NamedValuesHandler
                 name = UnifyName(name);
                 var handlers = _policy._namedValueHandlers;
                 if (handlers.ContainsKey(name))
+                {
                     handlers[name] = handler;
+                }
                 else
+                {
                     handlers.Add(name, handler);
+                }
 
                 return this;
             }
