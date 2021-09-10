@@ -16,7 +16,7 @@ Handles values of structured logs. Can mask or omit values from structured logs
     ```csharp
     var logger = new LoggerConfiguration()
         .Destructure
-            .WithPropertyHandler(p => p
+            .HandleValues(p => p
                 .MaskStringValue("email")                           // *********
                 .MaskStringValue("IBAN", visibleCharsAmount: 6)     // **********************560101
             )
@@ -27,7 +27,7 @@ Handles values of structured logs. Can mask or omit values from structured logs
     ```csharp
         var logger = new LoggerConfiguration()
             .Destructure
-                .WithPropertyHandler(p => p
+                .HandleValues(p => p
                     .OmitNames("email", "IBAN")
                     .OmitFromNamespace("Business.Domain.Secured", "System")
                     .OmitOfType(typeof(DestructibleEntity))

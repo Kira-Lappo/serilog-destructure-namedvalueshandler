@@ -26,7 +26,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var logger = new LoggerConfiguration()
                 .Destructure
-                .WithPropertyHandler(
+                .HandleValues(
                     p => p
                         .OmitNames("email", "IBAN")
                         .OmitFromNamespace("Business.Domain.Secured", "System")

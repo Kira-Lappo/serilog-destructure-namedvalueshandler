@@ -5,7 +5,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public static class SerilogExtensions
     {
-        public static LoggerConfiguration WithPropertyHandler(
+        public static LoggerConfiguration HandleValues(
             this LoggerDestructuringConfiguration configuration,
             Action<NamedValueDestructuringPolicy.NamedValuePolicyBuilder> policyConfiguration
         )
