@@ -48,7 +48,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var value = new Dictionary<string, string>
             {
-                { maskedKey, maskedValue },
+                { maskedKey, maskedValue }
             };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
@@ -80,7 +80,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var value = new Dictionary<string, string>
             {
-                { omittedKey, omittedValue },
+                { omittedKey, omittedValue }
             };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
@@ -107,7 +107,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var value = new Dictionary<string, string>
             {
-                { omittedKey, omittedValue },
+                { omittedKey, omittedValue }
             };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
@@ -135,7 +135,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var value = new Dictionary<string, string>
             {
-                { omittedKey, omittedValue },
+                { omittedKey, omittedValue }
             };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
@@ -162,7 +162,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
             var value = new Dictionary<string, string>
             {
-                { notModifiedKey, notModifiedValue },
+                { notModifiedKey, notModifiedValue }
             };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()

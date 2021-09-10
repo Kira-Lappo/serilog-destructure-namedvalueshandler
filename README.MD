@@ -14,7 +14,7 @@ Handles values of structured logs. Can mask or omit values from structured logs
 
 ## Typical Usage
 
-* Mask some sensitive values
+* Mask some sensitive values:
     ```csharp
     var logger = new LoggerConfiguration()
         .Destructure
@@ -25,7 +25,7 @@ Handles values of structured logs. Can mask or omit values from structured logs
         .CreateLogger();
     ```
 
-* Completely remove some values
+* Completely remove some values:
     ```csharp
         var logger = new LoggerConfiguration()
             .Destructure
@@ -35,4 +35,25 @@ Handles values of structured logs. Can mask or omit values from structured logs
                     .OmitOfType(typeof(DestructibleEntity))
                 )
             .CreateLogger();
+    ```
+
+* Do your own value modification:
+    ```csharp
+    var logger = new LoggerConfiguration()
+                  .Destructure
+                  .HandleValues(p => p
+                      .WithNamedValueHandler(
+                          "email",
+                          (value, type) => $"*****@{value.Split("@").Last()}")) // *****@gmail.com
+                  .CreateLogger();
+    ```
+
+* Omit by your own rules:
+    ```csharp
+    var logger = new LoggerConfiguration()
+        .Destructure
+        .HandleValues(p => p
+            .WithOmitHandler(
+                (name, value, type) => name == "age" && (int)value < 18))
+        .CreateLogger();
     ```
