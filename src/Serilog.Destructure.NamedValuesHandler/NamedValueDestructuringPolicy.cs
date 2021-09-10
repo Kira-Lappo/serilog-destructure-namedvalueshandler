@@ -57,7 +57,11 @@ namespace Serilog.Destructure.NamedValuesHandler
                         return (name, value, declaringType);
                     });
 
-            return TryDestructureNamedValues(namedValues, propertyValueFactory, out result);
+            var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
+                .Select(_ => new LogEventProperty(_.name, _.logEventValue));
+
+            result = new StructureValue(logEventProperties);
+            return true;
         }
 
         private bool TryDestructureDictionary(
@@ -66,38 +70,39 @@ namespace Serilog.Destructure.NamedValuesHandler
             out LogEventPropertyValue result
         )
         {
-            var namedValues = new List<(string name, object value, Type declaringType)>();
-            foreach (var key in dictionary.Keys)
-            {
-                var name = key.ToString();
-                var value = dictionary[key];
-                var declaringType = value.GetType().DeclaringType;
-                namedValues.Add((name, value, declaringType));
-            }
+            var namedValues = dictionary.Keys
+                .Cast<object>()
+                .Select(
+                    k =>
+                    {
+                        var name = k.ToString();
+                        var value = dictionary[k];
+                        var declaringType = value.GetType();
+                        return (name, value, declaringType);
+                    });
 
-            return TryDestructureNamedValues(namedValues, propertyValueFactory, out result);
+            var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
+                .Select(_ => new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(_.name), _.logEventValue));
+
+            result = new DictionaryValue(logEventProperties);
+            return true;
         }
 
-        private bool TryDestructureNamedValues(
+        private IEnumerable<(string name, LogEventPropertyValue logEventValue)> DestructureNamedValues(
             IEnumerable<(string, object, Type)> namedValues,
-            ILogEventPropertyValueFactory propertyValueFactory,
-            out LogEventPropertyValue result
+            ILogEventPropertyValueFactory propertyValueFactory
         )
         {
-            var eventProperties = namedValues
+            return namedValues
                 .Where(nv => !IsOmitted(nv))
                 .Select(
                     nv =>
                     {
                         var (name, value, declaringType) = nv;
                         var handledValue = HandleNamedValue(name, value, declaringType);
-
-                        return CreateEventPropertyValue(name, handledValue, propertyValueFactory);
-                    })
-                .ToList();
-
-            result = new StructureValue(eventProperties);
-            return true;
+                        var logEventProperty = CreateEventPropertyValue(handledValue, propertyValueFactory);
+                        return (name, logEventProperty);
+                    });
         }
 
         private bool IsOmitted((string name, object value, Type declaringType) _)
@@ -105,17 +110,14 @@ namespace Serilog.Destructure.NamedValuesHandler
             return _omitHandlers.Any(h => h.Invoke(_.name, _.value, _.declaringType));
         }
 
-        private static LogEventProperty CreateEventPropertyValue(
-            string name,
+        private static LogEventPropertyValue CreateEventPropertyValue(
             object value,
             ILogEventPropertyValueFactory propertyValueFactory
         )
         {
-            var eventValue = value == null
+            return value == null
                 ? new ScalarValue(value: null)
                 : propertyValueFactory.CreatePropertyValue(value, destructureObjects: true);
-
-            return new LogEventProperty(name, eventValue);
         }
 
         private object HandleNamedValue(string name, object value, Type declaringType)
@@ -154,15 +156,15 @@ namespace Serilog.Destructure.NamedValuesHandler
                 return this;
             }
 
-            public NamedValueDestructuringPolicy Build()
-            {
-                return _policy;
-            }
-
             public NamedValuePolicyBuilder WithOmitHandler(Func<string, object, Type, bool> omitHandler)
             {
                 _policy._omitHandlers.Add(omitHandler);
                 return this;
+            }
+
+            public NamedValueDestructuringPolicy Build()
+            {
+                return _policy;
             }
         }
     }
