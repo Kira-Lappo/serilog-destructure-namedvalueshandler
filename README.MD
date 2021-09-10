@@ -1,5 +1,7 @@
 # Serilog.Destructure.NamedValuesHandler
 
+[![.NET](https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler/actions/workflows/dotnet.yml)
+
 > Work In Progress. No guaranties.
 
 Handles values of structured logs. Can mask or omit values from structured logs
