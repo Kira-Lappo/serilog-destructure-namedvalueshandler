@@ -125,7 +125,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             name = UnifyName(name);
             if (_namedValueHandlers.TryGetValue(name, out var handler))
             {
-                handler.Invoke(value, declaringType);
+                return handler.Invoke(value, declaringType);
             }
 
             return value;
