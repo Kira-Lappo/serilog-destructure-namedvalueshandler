@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Serilog.Events;
@@ -9,16 +8,11 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 {
     public partial class NamedValueDestructuringPolicyTests
     {
-        [Fact]
-        public void TryDestructureDictionary_ValueIsDestructed()
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureDictionary_HappyPath_ValueIsDestructed(Dictionary<string, string> value)
         {
             // Arrange
-            var maskedKey = Guid.NewGuid().ToString();
-            var value = new Dictionary<string, string>
-            {
-                { maskedKey, maskedKey + ":value" }
-            };
-
             var policy = new NamedValueDestructuringPolicy();
 
             // Act
@@ -38,18 +32,14 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
                 .BeEquivalentTo(value.Values.Select(v => new ScalarValue(v)));
         }
 
-        [Fact]
-        public void TryDestructureDictionary_ValueIsMasked_MaskedValueIsDestructured()
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureDictionary_ValueIsMasked_MaskedValueIsDestructured(Dictionary<string, string> value)
         {
             // Arrange
-            var maskedKey = Guid.NewGuid().ToString();
-            var maskedValue = $"{maskedKey}:value";
+            var maskedKey = value.Keys.First();
+            var maskedValue = value[maskedKey];
             var expectedMaskedValue = maskedValue.MaskValue();
-
-            var value = new Dictionary<string, string>
-            {
-                { maskedKey, maskedValue }
-            };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
                 .MaskStringValue(maskedKey)
@@ -71,17 +61,12 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
                 .Contain(expectedMaskedValue);
         }
 
-        [Fact]
-        public void TryDestructureDictionary_ValueIsOmitted_ByName_ValueIsRemoved()
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureDictionary_ValueIsOmitted_ByName_ValueIsRemoved(Dictionary<string, string> value)
         {
             // Arrange
-            var omittedKey = Guid.NewGuid().ToString();
-            var omittedValue = $"{omittedKey}:value";
-
-            var value = new Dictionary<string, string>
-            {
-                { omittedKey, omittedValue }
-            };
+            var omittedKey = value.Keys.First();
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
                 .OmitNames(omittedKey)
@@ -98,17 +83,13 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             dictionaryResult.Elements.Keys.Should().NotContain(e => e.Value.ToString() == omittedKey);
         }
 
-        [Fact]
-        public void TryDestructureDictionary_ValueIsOmitted_ByType_ValueIsRemoved()
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureDictionary_ValueIsOmitted_ByType_ValueIsRemoved(Dictionary<string, string> value)
         {
             // Arrange
-            var omittedKey = Guid.NewGuid().ToString();
-            var omittedValue = $"{omittedKey}:value";
-
-            var value = new Dictionary<string, string>
-            {
-                { omittedKey, omittedValue }
-            };
+            var omittedKey = value.Keys.First();
+            var omittedValue = value[omittedKey];
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
                 .OmitOfType(omittedValue.GetType())
@@ -125,18 +106,14 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             dictionaryResult.Elements.Keys.Should().NotContain(e => e.Value.ToString() == omittedKey);
         }
 
-        [Fact]
-        public void TryDestructureDictionary_ValueIsOmitted_ByNamespace_ValueIsRemoved()
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureDictionary_ValueIsOmitted_ByNamespace_ValueIsRemoved(Dictionary<string, string> value)
         {
             // Arrange
-            var omittedKey = Guid.NewGuid().ToString();
-            var omittedValue = $"{omittedKey}:value";
+            var omittedKey = value.Keys.First();
+            var omittedValue = value[omittedKey];
             var omittedNamespace = omittedValue.GetType().Namespace?.Split(".").First();
-
-            var value = new Dictionary<string, string>
-            {
-                { omittedKey, omittedValue }
-            };
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
                 .OmitFromNamespace(omittedNamespace)
@@ -153,17 +130,13 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             dictionaryResult.Elements.Keys.Should().NotContain(e => e.Value.ToString() == omittedKey);
         }
 
-        [Fact]
-        public void TryDestructureDictionary_ValueIsNotSetInAnyWay_ValueIsNotChanged()
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureDictionary_ValueIsNotMaskedOrOmitted_ValueIsNotChanged(Dictionary<string, string> value)
         {
             // Arrange
-            var notModifiedKey = Guid.NewGuid().ToString();
-            var notModifiedValue = $"{notModifiedKey}:value";
-
-            var value = new Dictionary<string, string>
-            {
-                { notModifiedKey, notModifiedValue }
-            };
+            var notModifiedKey = value.Keys.First();
+            var notModifiedValue = value[notModifiedKey];
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
                 .MaskStringValue($"{notModifiedKey}:masked")
