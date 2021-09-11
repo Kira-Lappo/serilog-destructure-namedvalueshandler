@@ -65,15 +65,14 @@ But we may have more complex situation. For example, we still want to see at lea
 Let's change mask handling:
 
 ```csharp
-    .Destructure
-        .HandleValues(p => p
-            .HandleNamedValue<string>(
-              "email",
-              value => string.IsNullOrWhiteSpace(value)
-                  ? value
-                  : $"*****@{value.Split("@").Last()}")
-            )
-        )
+.HandleValues(p => p
+    .HandleNamedValue<string>(
+      "email",
+      value => string.IsNullOrWhiteSpace(value)
+          ? value
+          : $"*****@{value.Split("@").Last()}")
+    )
+)
 ```
 
 Now we have only domain name in log message:
@@ -85,9 +84,9 @@ Now we have only domain name in log message:
 We can also omit some values so they are disappear from log message:
 
 ```csharp
-    .HandleValues(p => p
-        .OmitNames("email", "age")
-    )
+.HandleValues(p => p
+    .OmitNames("email", "age")
+)
 ```
 ```bash
 [01:49:19 INF] Logged User: {"Name": "John Watson"}
