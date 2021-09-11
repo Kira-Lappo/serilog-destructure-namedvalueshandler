@@ -5,7 +5,7 @@
     <PackageVersion>0.0.1-alpha</PackageVersion>
     <Authors>Kirill Lappo</Authors>
     <Description>Additional functionality to handle named values in structured log in a different purposes like masking.</Description>
-    <PackageLicenseUrl>https://www.gnu.org/licenses/gpl-3.0.ru.html</PackageLicenseUrl>
+    <LicenseUrl>https://www.gnu.org/licenses/gpl-3.0.ru.html</LicenseUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>serilog,masking,hide,destructure,structured,log</PackageTags>
     <PackageReleaseNotes>Early development phase</PackageReleaseNotes>
