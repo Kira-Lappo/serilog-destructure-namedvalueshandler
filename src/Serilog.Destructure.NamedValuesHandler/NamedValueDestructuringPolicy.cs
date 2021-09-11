@@ -17,7 +17,9 @@ namespace Serilog.Destructure.NamedValuesHandler
             switch (value)
             {
                 case null:
-                case DateTime: // Todo [2021/09/10 KL] Need to figure it our a better
+                case DateTime: // Todo [2021/09/10 KL] Need to figure it our a better way to ignore non-key-value structures
+                case Guid:
+                case Enum:
                     result = null;
                     return false;
 
