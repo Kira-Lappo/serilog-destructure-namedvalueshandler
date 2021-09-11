@@ -1,14 +1,14 @@
-name: .NET
+name: Build, Test and Publish
 
 on:
     push:
         branches: [ master ]
-    pull_request:
-        branches: [ master ]
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
 
 jobs:
     build:
-
         runs-on: ubuntu-latest
 
         steps:
@@ -23,3 +23,7 @@ jobs:
                 run: dotnet build -c Release --no-restore
             -   name: Test
                 run: dotnet test -c Release --no-build --verbosity normal
+            -   name: Pack
+                run: dotnet pack ./src/Serilog.Destructure.NamedValuesHandler/Serilog.Destructure.NamedValuesHandler.csproj -c Release --no-build -o ./
+            -   name: Push to nuget.org
+                run: dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source "https://api.nuget.org/v3/index.json"
