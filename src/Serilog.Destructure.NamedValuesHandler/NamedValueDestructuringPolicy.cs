@@ -110,18 +110,19 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         private bool IsOmitted((string name, object value, Type valueType) _)
         {
-            return _omitHandlers.Any(h =>
-            {
-                try
+            return _omitHandlers.Any(
+                h =>
                 {
-                    return h.Invoke(_.name, _.value, _.valueType);
-                }
-                catch (Exception e)
-                {
-                    SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {_.name} Type: {_.valueType}. Exception: {e}");
-                    return false;
-                }
-            });
+                    try
+                    {
+                        return h.Invoke(_.name, _.value, _.valueType);
+                    }
+                    catch (Exception e)
+                    {
+                        SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {_.name} Type: {_.valueType}. Exception: {e}");
+                        return false;
+                    }
+                });
         }
 
         private static LogEventPropertyValue CreateEventPropertyValue(
@@ -137,18 +138,19 @@ namespace Serilog.Destructure.NamedValuesHandler
         private object HandleNamedValue(string name, object value, Type valueType)
         {
             var handleResult = _namedValueHandlers
-                .Select(h =>
-                {
-                    try
+                .Select(
+                    h =>
                     {
-                        return h.Invoke(name, value, valueType);
-                    }
-                    catch (Exception e)
-                    {
-                        SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {name} Type: {valueType}. Exception: {e}");
-                        return default;
-                    }
-                })
+                        try
+                        {
+                            return h.Invoke(name, value, valueType);
+                        }
+                        catch (Exception e)
+                        {
+                            SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {name} Type: {valueType}. Exception: {e}");
+                            return default;
+                        }
+                    })
                 .FirstOrDefault(r => r.IsHandled);
 
             return handleResult == default
