@@ -12,9 +12,9 @@ namespace Serilog.Destructure.NamedValuesHandler
         {
             return namedValuePolicyBuilder.WithNamedValueHandler(
                 name,
-                (value, declaringType) =>
+                (value, valueType) =>
                     handler != null
-                        ? handler.Invoke(value, declaringType)
+                        ? handler.Invoke(value, valueType)
                         : value);
         }
 
@@ -26,9 +26,9 @@ namespace Serilog.Destructure.NamedValuesHandler
         {
             return namedValuePolicyBuilder.HandleNamedValue(
                 name,
-                (value, declaringType) =>
+                (value, valueType) =>
                     handler != null
-                    && (typeof(TValue) == declaringType
+                    && (typeof(TValue) == valueType
                         || typeof(TValue) == value.GetType())
                         ? handler.Invoke((TValue)value)
                         : value);

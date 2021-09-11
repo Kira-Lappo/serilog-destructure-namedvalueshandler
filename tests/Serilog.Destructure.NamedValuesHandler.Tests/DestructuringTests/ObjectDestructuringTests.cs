@@ -12,7 +12,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 
         [Theory]
         [AutoMoqData]
-        public void TryDestructureObject_ObjectHasProperties_PropertiesAreDestructured(DestructibleEntity value)
+        public void TryDestructureObject_HappyPath_PropertiesAreDestructured(DestructibleEntity value)
         {
             // Arrange
             var expectedProperties = value.GetType().GetProperties();
@@ -42,32 +42,125 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 
         [Theory]
         [AutoMoqData]
-        public void TryDestructureObject_Properties_PropertiesAreDestructured(DestructibleEntity value)
+        public void TryDestructureObject_ValueIsMasked_MaskedValueIsDestructured(DestructibleEntity value)
         {
             // Arrange
-            var expectedProperties = value.GetType().GetProperties();
-            var policy = new NamedValueDestructuringPolicy();
+            var maskedKey = nameof(value.Name);
+            var maskedValue = value.Name;
+            var expectedMaskedValue = new ScalarValue(maskedValue.MaskValue());
+
+            var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
+                .MaskStringValue(maskedKey)
+                .Build();
 
             // Act
-            var isDestructured = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
+            var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
 
             // Assert
-            isDestructured.Should().BeTrue();
+            isHandled.Should().BeTrue();
             result.Should().NotBeNull();
-            result.Should().BeOfType<StructureValue>();
 
-            var structuredResult = (StructureValue)result;
+            var dictionaryResult = (StructureValue)result;
+            dictionaryResult.Properties.Should().Contain(e => e.Name == maskedKey && Equals(e.Value, expectedMaskedValue));
+        }
 
-            structuredResult.Properties.Should().NotBeEmpty();
-            structuredResult.Properties.Should().HaveSameCount(expectedProperties);
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureObject_ValueIsOmitted_ByName_ValueIsRemoved(DestructibleEntity value)
+        {
+            // Arrange
+            var omittedKey = nameof(value.Name);
 
-            structuredResult.Properties.Select(p => p.Name)
-                .Should()
-                .BeEquivalentTo(expectedProperties.Select(p => p.Name));
+            var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
+                .OmitNames(omittedKey)
+                .Build();
 
-            structuredResult.Properties.Select(p => p.Value)
-                .Should()
-                .BeEquivalentTo(expectedProperties.Select(p => new ScalarValue(p.GetValue(value))));
+            // Act
+            var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
+
+            // Assert
+            isHandled.Should().BeTrue();
+            result.Should().NotBeNull();
+
+            var dictionaryResult = (StructureValue)result;
+            dictionaryResult.Properties.Should()
+                .NotContain(e => e.Name == omittedKey);
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureObject_ValueIsOmitted_ByType_ValueIsRemoved(DestructibleEntity value)
+        {
+            // Arrange
+            var omittedKey = nameof(value.Name);
+            var omittedValue = value.Name;
+
+            var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
+                .OmitOfType(omittedValue.GetType())
+                .Build();
+
+            // Act
+            var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
+
+            // Assert
+            isHandled.Should().BeTrue();
+            result.Should().NotBeNull();
+
+            var dictionaryResult = (StructureValue)result;
+            dictionaryResult.Properties.Should()
+                .NotContain(e => e.Name == omittedKey);
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureObject_ValueIsOmitted_ByNamespace_ValueIsRemoved(DestructibleEntity value)
+        {
+            // Arrange
+            var omittedKey = nameof(value.Name);
+            var omittedValue = value.Name;
+            var omittedNamespace = omittedValue.GetType().Namespace?.Split(".").First();
+
+            var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
+                .OmitFromNamespace(omittedNamespace)
+                .Build();
+
+            // Act
+            var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
+
+            // Assert
+            isHandled.Should().BeTrue();
+            result.Should().NotBeNull();
+
+            var dictionaryResult = (StructureValue)result;
+            dictionaryResult.Properties.Should()
+                .NotContain(e => e.Name == omittedKey);
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructureObject_ValueIsNotMaskedOrOmitted_ValueIsNotChanged(DestructibleEntity value)
+        {
+            // Arrange
+            var notModifiedKey = nameof(value.Name);
+            var notModifiedValue = new ScalarValue(value.Name);
+
+            var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
+                .MaskStringValue($"{notModifiedKey}:masked")
+                .OmitFromNamespace("Special.Namespace", "Legacy")
+                .OmitOfType(typeof(int))
+                .OmitNames($"{notModifiedKey}:omitted")
+                .Build();
+
+            // Act
+            var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
+
+            // Assert
+            isHandled.Should().BeTrue();
+            result.Should().NotBeNull();
+
+            var dictionaryResult = (StructureValue)result;
+            dictionaryResult.Properties.Should()
+                .Contain(e => e.Name == notModifiedKey && Equals(e.Value, notModifiedValue));
         }
     }
 }

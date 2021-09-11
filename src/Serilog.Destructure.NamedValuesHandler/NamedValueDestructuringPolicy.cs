@@ -53,8 +53,8 @@ namespace Serilog.Destructure.NamedValuesHandler
                     {
                         var name = pi.Name;
                         var value = pi.GetValue(objectValue);
-                        var declaringType = pi.DeclaringType;
-                        return (name, value, declaringType);
+                        var valueType = pi.PropertyType;
+                        return (name, value, valueType);
                     });
 
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
@@ -77,8 +77,8 @@ namespace Serilog.Destructure.NamedValuesHandler
                     {
                         var name = k.ToString();
                         var value = dictionary[k];
-                        var declaringType = value.GetType();
-                        return (name, value, declaringType);
+                        var valueType = value.GetType();
+                        return (name, value, valueType);
                     });
 
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
@@ -98,16 +98,16 @@ namespace Serilog.Destructure.NamedValuesHandler
                 .Select(
                     nv =>
                     {
-                        var (name, value, declaringType) = nv;
-                        var handledValue = HandleNamedValue(name, value, declaringType);
+                        var (name, value, valueType) = nv;
+                        var handledValue = HandleNamedValue(name, value, valueType);
                         var logEventProperty = CreateEventPropertyValue(handledValue, propertyValueFactory);
                         return (name, logEventProperty);
                     });
         }
 
-        private bool IsOmitted((string name, object value, Type declaringType) _)
+        private bool IsOmitted((string name, object value, Type valueType) _)
         {
-            return _omitHandlers.Any(h => h.Invoke(_.name, _.value, _.declaringType));
+            return _omitHandlers.Any(h => h.Invoke(_.name, _.value, _.valueType));
         }
 
         private static LogEventPropertyValue CreateEventPropertyValue(
@@ -120,12 +120,12 @@ namespace Serilog.Destructure.NamedValuesHandler
                 : propertyValueFactory.CreatePropertyValue(value, destructureObjects: true);
         }
 
-        private object HandleNamedValue(string name, object value, Type declaringType)
+        private object HandleNamedValue(string name, object value, Type valueType)
         {
             name = UnifyName(name);
             if (_namedValueHandlers.TryGetValue(name, out var handler))
             {
-                return handler.Invoke(value, declaringType);
+                return handler.Invoke(value, valueType);
             }
 
             return value;

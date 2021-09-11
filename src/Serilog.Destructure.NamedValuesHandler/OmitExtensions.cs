@@ -19,9 +19,9 @@ namespace Serilog.Destructure.NamedValuesHandler
         )
         {
             return builder.WithOmitHandler(
-                (_, _, declaringType) =>
+                (_, _, valueType) =>
                 {
-                    var @namespace = declaringType.Namespace;
+                    var @namespace = valueType.Namespace;
                     return @namespace != default && namespaces.Any(n => @namespace.StartsWith(n));
                 });
         }
@@ -31,7 +31,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             params Type[] types
         )
         {
-            return builder.WithOmitHandler((_, _, declaringType) => types.Contains(declaringType));
+            return builder.WithOmitHandler((_, _, valueType) => types.Contains(valueType));
         }
     }
 }
