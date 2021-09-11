@@ -13,8 +13,7 @@
         {
             return namedValuePolicyBuilder.HandleNamedValue<string>(
                 name,
-                value =>
-                    value?.MaskValue(visibleCharsAmount, maskChar));
+                value => value?.MaskValue(visibleCharsAmount, maskChar));
         }
 
         internal static string MaskValue(this string value, int? visibleCharsAmount = null, char maskChar = DefaultMaskChar)

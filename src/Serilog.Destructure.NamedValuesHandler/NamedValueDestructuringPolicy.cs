@@ -9,8 +9,8 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public class NamedValueDestructuringPolicy : IDestructuringPolicy
     {
-        private readonly Dictionary<string, Func<object, Type, object>> _namedValueHandlers = new();
-        private readonly List<Func<string, object, Type, bool>>         _omitHandlers       = new();
+        private readonly List<Func<string, object, Type, (bool IsHandled, object value)>> _namedValueHandlers = new();
+        private readonly List<Func<string, object, Type, bool>>                           _omitHandlers       = new();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
@@ -123,12 +123,13 @@ namespace Serilog.Destructure.NamedValuesHandler
         private object HandleNamedValue(string name, object value, Type valueType)
         {
             name = UnifyName(name);
-            if (_namedValueHandlers.TryGetValue(name, out var handler))
-            {
-                return handler.Invoke(value, valueType);
-            }
+            var handleResult = _namedValueHandlers
+                .Select(h => h.Invoke(name, value, valueType))
+                .FirstOrDefault(r => r.IsHandled);
 
-            return value;
+            return handleResult == default
+                ? value
+                : handleResult.value;
         }
 
         private static string UnifyName(string name)
@@ -140,19 +141,9 @@ namespace Serilog.Destructure.NamedValuesHandler
         {
             private readonly NamedValueDestructuringPolicy _policy = new();
 
-            public NamedValuePolicyBuilder WithNamedValueHandler(string name, Func<object, Type, object> handler)
+            public NamedValuePolicyBuilder WithNamedValueHandler(Func<string, object, Type, (bool IsHandled, object value)> handler)
             {
-                name = UnifyName(name);
-                var handlers = _policy._namedValueHandlers;
-                if (handlers.ContainsKey(name))
-                {
-                    handlers[name] = handler;
-                }
-                else
-                {
-                    handlers.Add(name, handler);
-                }
-
+                _policy._namedValueHandlers.Add(handler);
                 return this;
             }
 

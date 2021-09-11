@@ -61,7 +61,8 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             result.Should().NotBeNull();
 
             var dictionaryResult = (StructureValue)result;
-            dictionaryResult.Properties.Should().Contain(e => e.Name == maskedKey && Equals(e.Value, expectedMaskedValue));
+            dictionaryResult.Properties.Should()
+                .Contain(e => e.Name == maskedKey && Equals(e.Value, expectedMaskedValue));
         }
 
         [Theory]

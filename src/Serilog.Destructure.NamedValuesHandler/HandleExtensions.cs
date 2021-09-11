@@ -4,34 +4,53 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public static class HandleExtensions
     {
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
-            string name,
-            Func<object, Type, object> handler
+            string valueName,
+            Func<TValue, TValue> handler
         )
         {
-            return namedValuePolicyBuilder.WithNamedValueHandler(
-                name,
-                (value, valueType) =>
-                    handler != null
-                        ? handler.Invoke(value, valueType)
-                        : value);
+            return namedValuePolicyBuilder.HandleNamedValue<TValue>(
+                valueName,
+                value => (true, handler.Invoke(value)));
         }
 
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
-            string name,
-            Func<TValue, TValue> handler
+            string valueName,
+            Func<TValue, (bool IsHandled, TValue Value)> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue(
-                name,
-                (value, valueType) =>
-                    handler != null
-                    && (typeof(TValue) == valueType
-                        || typeof(TValue) == value.GetType())
-                        ? handler.Invoke((TValue)value)
-                        : value);
+            return namedValuePolicyBuilder.HandleNamedValue<TValue>(
+                (name, value) =>
+                {
+                    if (handler == null
+                        || !string.Equals(valueName, name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return (false, value);
+                    }
+
+                    return handler.Invoke(value);
+                });
+        }
+
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+            this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
+            Func<string, TValue, (bool IsHandled, TValue Value)> handler
+        )
+        {
+            return namedValuePolicyBuilder.WithNamedValueHandler(
+                (name, value, valueType) =>
+                {
+                    if (handler == null
+                        || typeof(TValue) != valueType
+                        && typeof(TValue) != value.GetType())
+                    {
+                        return (false, value);
+                    }
+
+                    return handler(name, (TValue)value);
+                });
         }
     }
 }
