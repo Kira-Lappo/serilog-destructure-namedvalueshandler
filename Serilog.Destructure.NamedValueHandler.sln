@@ -18,6 +18,10 @@ ProjectSection(SolutionItems) = preProject
 	.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{2E94D0C8-45D7-4486-B77E-491E16A85787}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Destructure.NamedValuesHandler.Example", "examples\Serilog.Destructure.NamedValuesHandler.Example\Serilog.Destructure.NamedValuesHandler.Example.csproj", "{5C06B442-8E6C-4C20-BBBD-4968040EF177}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +36,14 @@ Global
 		{107B7880-4F88-41E0-A1A4-891175C9A294}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{107B7880-4F88-41E0-A1A4-891175C9A294}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{107B7880-4F88-41E0-A1A4-891175C9A294}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C06B442-8E6C-4C20-BBBD-4968040EF177}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C06B442-8E6C-4C20-BBBD-4968040EF177}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C06B442-8E6C-4C20-BBBD-4968040EF177}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C06B442-8E6C-4C20-BBBD-4968040EF177}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{107B7880-4F88-41E0-A1A4-891175C9A294} = {2078FFCA-5B82-4001-96B8-25D76795ABF6}
 		{06F2C202-7611-4139-BB75-DCBB6C1D7021} = {C53A2519-B618-4E2B-A765-F569E865018C}
+		{5C06B442-8E6C-4C20-BBBD-4968040EF177} = {2E94D0C8-45D7-4486-B77E-491E16A85787}
 	EndGlobalSection
 EndGlobal
