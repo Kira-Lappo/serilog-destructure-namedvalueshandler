@@ -124,7 +124,6 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         private object HandleNamedValue(string name, object value, Type valueType)
         {
-            name = UnifyName(name);
             var handleResult = _namedValueHandlers
                 .Select(h => h.Invoke(name, value, valueType))
                 .FirstOrDefault(r => r.IsHandled);
@@ -132,11 +131,6 @@ namespace Serilog.Destructure.NamedValuesHandler
             return handleResult == default
                 ? value
                 : handleResult.value;
-        }
-
-        private static string UnifyName(string name)
-        {
-            return name.ToLower();
         }
 
         public class NamedValuePolicyBuilder
