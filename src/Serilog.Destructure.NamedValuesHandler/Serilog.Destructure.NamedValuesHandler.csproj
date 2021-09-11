@@ -11,10 +11,15 @@
     <PackageReleaseNotes>Early development phase</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler</RepositoryUrl>
+    <PackageReadmeFile>README.MD</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.10.0"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.MD" Pack="true" PackagePath="/"/>
   </ItemGroup>
 
 </Project>
