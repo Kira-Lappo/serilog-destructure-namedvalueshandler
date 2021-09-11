@@ -36,6 +36,15 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
+            Func<string, TValue, TValue> handler
+        )
+        {
+            return namedValuePolicyBuilder.HandleNamedValue<TValue>(
+                (name, value) => (true, handler(name, value)));
+        }
+
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+            this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             Func<string, TValue, (bool IsHandled, TValue Value)> handler
         )
         {
