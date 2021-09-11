@@ -65,5 +65,32 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             structureResult.Properties.Should()
                 .Contain(p => p.Name == maskedName && Equals(p.Value, maskedValue));
         }
+
+        [Theory]
+        [AutoMoqData]
+        public void TryDestructure_HandlerReturnsNullAsANewValue_NullIsAccepted(DestructibleEntity value)
+        {
+            // Arrange
+            var maskedName = nameof(value.Name);
+            var expectedMaskedValue = new ScalarValue(value: null);
+
+            var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
+                .HandleNamedValue(
+                    maskedName,
+                    new Func<string, string>(_ => null))
+                .Build();
+
+            // Act
+            LogEventPropertyValue result = null;
+            Func<bool> action = () => policy.TryDestructure(value, ScalarOnlyFactory, out result);
+
+            // Assert
+            action.Should().NotThrow();
+            result.Should().NotBeNull();
+
+            var structureResult = (StructureValue)result;
+            structureResult.Properties.Should()
+                .Contain(p => p.Name == maskedName && Equals(p.Value, expectedMaskedValue));
+        }
     }
 }
