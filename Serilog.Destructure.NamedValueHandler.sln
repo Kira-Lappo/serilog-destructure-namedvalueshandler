@@ -21,7 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Destructure.NamedVa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{EC272A28-1AB9-4577-A4B0-3DAF03CFF375}"
 ProjectSection(SolutionItems) = preProject
-	.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	.github\workflows\build.yml = .github\workflows\build.yml
+	.github\workflows\publish.yml = .github\workflows\publish.yml
 EndProjectSection
 EndProject
 Global

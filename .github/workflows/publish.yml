@@ -1,0 +1,31 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+    push:
+        branches: [ master ]
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Setup .NET
+                uses: actions/setup-dotnet@v1
+                with:
+                    dotnet-version: 5.0.x
+            -   name: Restore dependencies
+                run: dotnet restore
+            -   name: Build
+                run: dotnet build -c Release --no-restore
+            -   name: Test
+                run: dotnet test -c Release --no-build --verbosity normal
+            -   name: Pack
+                run: dotnet pack --configuration Release --no-build
+            -   name: Push to nuget.org
+                run: dotnet nuget push "bin/Release/Serilog.Destructure.NamedValuesHandler.1.0.0.nupkg"  --api-key YOUR_GITHUB_PAT --source "github"
