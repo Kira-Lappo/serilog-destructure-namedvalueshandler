@@ -14,13 +14,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Destructure.NamedValuesHandler.Tests", "tests\Serilog.Destructure.NamedValuesHandler.Tests\Serilog.Destructure.NamedValuesHandler.Tests.csproj", "{107B7880-4F88-41E0-A1A4-891175C9A294}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{06F2C202-7611-4139-BB75-DCBB6C1D7021}"
-ProjectSection(SolutionItems) = preProject
-	.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
-EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{2E94D0C8-45D7-4486-B77E-491E16A85787}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Destructure.NamedValuesHandler.Example", "examples\Serilog.Destructure.NamedValuesHandler.Example\Serilog.Destructure.NamedValuesHandler.Example.csproj", "{5C06B442-8E6C-4C20-BBBD-4968040EF177}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{EC272A28-1AB9-4577-A4B0-3DAF03CFF375}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,5 +47,6 @@ Global
 		{107B7880-4F88-41E0-A1A4-891175C9A294} = {2078FFCA-5B82-4001-96B8-25D76795ABF6}
 		{06F2C202-7611-4139-BB75-DCBB6C1D7021} = {C53A2519-B618-4E2B-A765-F569E865018C}
 		{5C06B442-8E6C-4C20-BBBD-4968040EF177} = {2E94D0C8-45D7-4486-B77E-491E16A85787}
+		{EC272A28-1AB9-4577-A4B0-3DAF03CFF375} = {06F2C202-7611-4139-BB75-DCBB6C1D7021}
 	EndGlobalSection
 EndGlobal
