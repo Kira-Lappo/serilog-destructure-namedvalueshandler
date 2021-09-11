@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
-namespace Serilog.Destructure.NamedValuesHandler.Tests
+namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public partial class NamedValueDestructuringPolicyTests
+    public class DictionaryDestructuringTests
     {
+        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
+
         [Theory]
         [AutoMoqData]
         public void TryDestructureDictionary_HappyPath_ValueIsDestructed(Dictionary<string, string> value)

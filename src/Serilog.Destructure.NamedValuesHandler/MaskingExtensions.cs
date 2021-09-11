@@ -17,7 +17,7 @@
                     value?.MaskValue(visibleCharsAmount, maskChar));
         }
 
-        public static string MaskValue(this string value, int? visibleCharsAmount = null, char maskChar = DefaultMaskChar)
+        internal static string MaskValue(this string value, int? visibleCharsAmount = null, char maskChar = DefaultMaskChar)
         {
             if (string.IsNullOrWhiteSpace(value))
             {

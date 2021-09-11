@@ -1,20 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using FluentAssertions;
+using Serilog.Core;
 using Xunit;
 
-namespace Serilog.Destructure.NamedValuesHandler.Tests
+namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public partial class NamedValueDestructuringPolicyTests
+    public class NonDestructuredObjectDestructuringTests
     {
+        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
+
         public static IEnumerable<object[]> NonDestructibleValues => new[]
         {
             new object[] { null },
             new object[] { Enumerable.Empty<int>() },
             new object[] { Environment.NewLine },
             new object[] { Guid.Empty },
-            new object[] { DateTime.UtcNow }
+            new object[] { DateTime.UtcNow },
+            new object[] { HttpStatusCode.InternalServerError },
+            new object[] { 42M },
+            new object[] { 42D },
+            new object[] { 42L },
+            new object[] { 42 },
+            new object[] { (short)42 },
+            new object[] { '*' },
+            new object[] { true }
         };
 
         [Theory]
