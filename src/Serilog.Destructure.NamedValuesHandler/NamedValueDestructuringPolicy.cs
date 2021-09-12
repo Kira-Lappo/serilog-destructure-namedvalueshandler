@@ -10,7 +10,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public class NamedValueDestructuringPolicy : IDestructuringPolicy
     {
-        private readonly List<Func<string, object, Type, (bool IsHandled, object value)>> _namedValueHandlers = new();
+        private readonly List<Func<string, object, Type, (bool IsHandled, object value)>> _valueHandlers = new();
         private readonly List<Func<string, object, Type, bool>>                           _omitHandlers       = new();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
@@ -140,7 +140,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         private object HandleNamedValue(string name, object value, Type valueType)
         {
-            var handleResult = _namedValueHandlers
+            var handleResult = _valueHandlers
                 .Select(
                     h =>
                     {
@@ -165,9 +165,9 @@ namespace Serilog.Destructure.NamedValuesHandler
         {
             private readonly NamedValueDestructuringPolicy _policy = new();
 
-            public NamedValuePolicyBuilder HandleNamedValue(Func<string, object, Type, (bool IsHandled, object value)> handler)
+            public NamedValuePolicyBuilder Handle(Func<string, object, Type, (bool IsHandled, object value)> handler)
             {
-                _policy._namedValueHandlers.Add(handler);
+                _policy._valueHandlers.Add(handler);
                 return this;
             }
 

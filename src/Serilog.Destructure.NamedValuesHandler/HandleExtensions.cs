@@ -4,24 +4,24 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public static class HandleExtensions
     {
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Handle<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string valueName,
             Func<TValue, object> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue<TValue>(
+            return namedValuePolicyBuilder.Handle<TValue>(
                 valueName,
                 value => (true, handler.Invoke(value)));
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Handle(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string valueName,
             Func<object, Type, (bool, object)> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue(
+            return namedValuePolicyBuilder.Handle(
                 (name, value, valueType) =>
                 {
                     if (!string.Equals(valueName, name, StringComparison.InvariantCultureIgnoreCase))
@@ -33,13 +33,13 @@ namespace Serilog.Destructure.NamedValuesHandler
                 });
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Handle<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string valueName,
             Func<TValue, (bool, object)> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue(
+            return namedValuePolicyBuilder.Handle(
                 valueName,
                 (value, valueType) =>
                 {
@@ -54,21 +54,21 @@ namespace Serilog.Destructure.NamedValuesHandler
                 });
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Handle<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             Func<string, TValue, object> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue<TValue>(
+            return namedValuePolicyBuilder.Handle<TValue>(
                 (name, value) => (true, handler(name, value)));
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Handle<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             Func<string, TValue, (bool IsHandled, object Value)> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue(
+            return namedValuePolicyBuilder.Handle(
                 (name, value, valueType) =>
                 {
                     if (handler == null
@@ -82,12 +82,12 @@ namespace Serilog.Destructure.NamedValuesHandler
                 });
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Handle(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             Func<string, object, Type, object> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue(
+            return namedValuePolicyBuilder.Handle(
                 (name, value, valueType) => (true, handler(name, value, valueType)));
         }
     }

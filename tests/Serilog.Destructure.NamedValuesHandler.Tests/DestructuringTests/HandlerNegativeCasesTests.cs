@@ -19,7 +19,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedValue = new ScalarValue(value.Name);
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .HandleNamedValue(
+                .Handle(
                     maskedName,
                     new Func<string, string>(
                         _ =>
@@ -75,7 +75,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var expectedMaskedValue = new ScalarValue(value: null);
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .HandleNamedValue(
+                .Handle(
                     maskedName,
                     new Func<string, string>(_ => null))
                 .Build();

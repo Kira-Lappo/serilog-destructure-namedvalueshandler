@@ -11,7 +11,7 @@
             char maskChar = DefaultMaskChar
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue<string>(
+            return namedValuePolicyBuilder.Handle<string>(
                 name,
                 value => value?.MaskValue(visibleCharsAmount, maskChar));
         }
