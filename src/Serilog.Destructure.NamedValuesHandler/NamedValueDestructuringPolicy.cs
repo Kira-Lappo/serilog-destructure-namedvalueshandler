@@ -27,7 +27,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                 case IDictionary dictionary:
                     return TryDestructureDictionary(dictionary, propertyValueFactory, out result);
 
-                case IEnumerable: // Todo [2021/09/10 KL] Ignoring any other enumerable for a while
+                case IEnumerable:
                     result = null;
                     return false;
 
@@ -63,7 +63,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
                 .Select(_ => new LogEventProperty(_.name, _.logEventValue));
 
-            result = new StructureValue(logEventProperties);
+            result = new StructureValue(logEventProperties, type.Name);
             return true;
         }
 
