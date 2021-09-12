@@ -6,6 +6,8 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
 {
     public static class Program
     {
+        private static readonly DateTime SpecialDate = new(year: 1905, month: 1, day: 1);
+
         public static void Main(string[] args)
         {
             var logger = CreateLogger();
@@ -23,7 +25,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                     .HandleValues(p => p
                         .Mask("name", visibleCharsAmount:4)
                         .Handle<string>((name, value) => "***")
-                        .Handle<DateTime>((name, value) => "DateTime.Secured")
+                        .Handle<DateTime>((name, value) => value > SpecialDate ? "DateTime.Secured" : value)
                         .Omit("badAddictions", "manufacturer")
                     )
                 .CreateLogger();
@@ -36,14 +38,14 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                 Id        = Guid.NewGuid(),
                 Name      = "John Watson",
                 Age       = 35,
-                BirthDate = new DateTime(1875, 5, 6),
+                BirthDate = new DateTime(year: 1875, month: 5, day: 6),
                 Car = new Car
                 {
                     Id              = Guid.NewGuid(),
                     FullName        = "Bolt V8",
                     Model           = "V8 Cherry",
                     Manufacturer    = "Bolt",
-                    ManufactureDate = new DateTime(1933),
+                    ManufactureDate = new DateTime(year: 1933, month: 4, day: 5),
                 },
                 Characteristics = new Dictionary<string, string>
                 {
