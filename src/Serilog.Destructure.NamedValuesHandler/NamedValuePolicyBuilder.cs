@@ -12,7 +12,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             return this;
         }
 
-        public NamedValuePolicyBuilder WithOmitHandler(Func<string, object, Type, bool> omitHandler)
+        public NamedValuePolicyBuilder Omit(Func<string, object, Type, bool> omitHandler)
         {
             _policy.OmitHandlers.Add(omitHandler);
             return this;

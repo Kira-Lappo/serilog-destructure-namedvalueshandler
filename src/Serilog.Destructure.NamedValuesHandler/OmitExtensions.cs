@@ -10,7 +10,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             params string[] names
         )
         {
-            return builder.WithOmitHandler((name, _, _) =>
+            return builder.Omit((name, _, _) =>
                 names.Any(n => string.Equals(n, name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
@@ -19,7 +19,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             params string[] namespaces
         )
         {
-            return builder.WithOmitHandler(
+            return builder.Omit(
                 (_, _, valueType) =>
                 {
                     var @namespace = valueType.Namespace;
@@ -32,7 +32,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             params Type[] types
         )
         {
-            return builder.WithOmitHandler((_, _, valueType) => types.Contains(valueType));
+            return builder.Omit((_, _, valueType) => types.Contains(valueType));
         }
     }
 }

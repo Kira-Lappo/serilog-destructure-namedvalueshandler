@@ -48,7 +48,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedValue = new ScalarValue(value.Name);
 
             var policy = new NamedValuePolicyBuilder()
-                .WithOmitHandler(
+                .Omit(
                     (_, _, _) =>
                         throw new Exception(nameof(TryDestructure_OmitterThrowsException_ValueIsNotOmitted)))
                 .Build();
