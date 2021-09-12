@@ -7,7 +7,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string valueName,
-            Func<TValue, TValue> handler
+            Func<TValue, object> handler
         )
         {
             return namedValuePolicyBuilder.HandleNamedValue<TValue>(
@@ -36,7 +36,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string valueName,
-            Func<TValue, (bool, TValue)> handler
+            Func<TValue, (bool, object)> handler
         )
         {
             return namedValuePolicyBuilder.HandleNamedValue(
@@ -56,7 +56,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
-            Func<string, TValue, TValue> handler
+            Func<string, TValue, object> handler
         )
         {
             return namedValuePolicyBuilder.HandleNamedValue<TValue>(
@@ -65,7 +65,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
-            Func<string, TValue, (bool IsHandled, TValue Value)> handler
+            Func<string, TValue, (bool IsHandled, object Value)> handler
         )
         {
             return namedValuePolicyBuilder.HandleNamedValue(
