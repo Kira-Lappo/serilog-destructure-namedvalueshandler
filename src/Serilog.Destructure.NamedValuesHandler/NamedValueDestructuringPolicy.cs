@@ -78,7 +78,10 @@ namespace Serilog.Destructure.NamedValuesHandler
                 .Select(
                     k =>
                     {
-                        var name = k.ToString();
+                        var name = propertyValueFactory.CreatePropertyValue(k, destructureObjects: true)
+                            .ToString()
+                            .Trim('"');
+
                         var value = dictionary[k];
                         var valueType = value.GetType();
                         return (name, value, valueType);
