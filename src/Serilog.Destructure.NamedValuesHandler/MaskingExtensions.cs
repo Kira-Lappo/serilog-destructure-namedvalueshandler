@@ -4,8 +4,8 @@
     {
         private const char DefaultMaskChar = '*';
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Mask(
-            this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
+        public static NamedValuePolicyBuilder Mask(
+            this NamedValuePolicyBuilder namedValuePolicyBuilder,
             string name,
             int? visibleCharsAmount = null,
             char maskChar = DefaultMaskChar
