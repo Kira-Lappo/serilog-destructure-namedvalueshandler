@@ -5,7 +5,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public static class OmitExtensions
     {
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder OmitNames(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder Omit(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder builder,
             params string[] names
         )
@@ -14,7 +14,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                 names.Any(n => string.Equals(n, name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder OmitFromNamespace(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder OmitNamespace(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder builder,
             params string[] namespaces
         )
@@ -27,7 +27,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                 });
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder OmitOfType(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder OmitType(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder builder,
             params Type[] types
         )

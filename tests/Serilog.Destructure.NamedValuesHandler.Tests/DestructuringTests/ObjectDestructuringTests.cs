@@ -73,7 +73,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedKey = nameof(value.Name);
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .OmitNames(omittedKey)
+                .Omit(omittedKey)
                 .Build();
 
             // Act
@@ -97,7 +97,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedValue = value.Name;
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .OmitOfType(omittedValue.GetType())
+                .OmitType(omittedValue.GetType())
                 .Build();
 
             // Act
@@ -122,7 +122,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedNamespace = omittedValue.GetType().Namespace?.Split(".").First();
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .OmitFromNamespace(omittedNamespace)
+                .OmitNamespace(omittedNamespace)
                 .Build();
 
             // Act
@@ -147,9 +147,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
                 .Mask($"{notModifiedKey}:masked")
-                .OmitFromNamespace("Special.Namespace", "Legacy")
-                .OmitOfType(typeof(int))
-                .OmitNames($"{notModifiedKey}:omitted")
+                .OmitNamespace("Special.Namespace", "Legacy")
+                .OmitType(typeof(int))
+                .Omit($"{notModifiedKey}:omitted")
                 .Build();
 
             // Act

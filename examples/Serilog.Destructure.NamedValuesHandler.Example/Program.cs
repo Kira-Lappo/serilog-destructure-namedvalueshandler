@@ -24,7 +24,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                         .Mask("name", visibleCharsAmount:4)
                         .Handle<string>((name, value) => "***")
                         .Handle<DateTime>((name, value) => "DateTime.Secured")
-                        .OmitNames("badAddictions", "manufacturer")
+                        .Omit("badAddictions", "manufacturer")
                     )
                 .CreateLogger();
         }
