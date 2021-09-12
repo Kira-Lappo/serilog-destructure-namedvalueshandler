@@ -47,10 +47,10 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             // Arrange
             var maskedKey = nameof(value.Name);
             var maskedValue = value.Name;
-            var expectedMaskedValue = new ScalarValue(maskedValue.MaskValue());
+            var expectedMaskedValue = new ScalarValue(maskedValue.Mask());
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .MaskStringValue(maskedKey)
+                .Mask(maskedKey)
                 .Build();
 
             // Act
@@ -146,7 +146,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var notModifiedValue = new ScalarValue(value.Name);
 
             var policy = new NamedValueDestructuringPolicy.NamedValuePolicyBuilder()
-                .MaskStringValue($"{notModifiedKey}:masked")
+                .Mask($"{notModifiedKey}:masked")
                 .OmitFromNamespace("Special.Namespace", "Legacy")
                 .OmitOfType(typeof(int))
                 .OmitNames($"{notModifiedKey}:omitted")
