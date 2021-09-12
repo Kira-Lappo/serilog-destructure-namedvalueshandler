@@ -8,10 +8,10 @@ using Serilog.Events;
 
 namespace Serilog.Destructure.NamedValuesHandler
 {
-    public class NamedValueDestructuringPolicy : IDestructuringPolicy
+    internal class NamedValueDestructuringPolicy : IDestructuringPolicy
     {
-        private readonly List<Func<string, object, Type, (bool IsHandled, object value)>> _namedValueHandlers = new();
-        private readonly List<Func<string, object, Type, bool>>                           _omitHandlers       = new();
+        public readonly List<Func<string, object, Type, bool>>                           OmitHandlers  = new();
+        public readonly List<Func<string, object, Type, (bool IsHandled, object value)>> ValueHandlers = new();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
@@ -27,7 +27,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                 case IDictionary dictionary:
                     return TryDestructureDictionary(dictionary, propertyValueFactory, out result);
 
-                case IEnumerable: // Todo [2021/09/10 KL] Ignoring any other enumerable for a while
+                case IEnumerable:
                     result = null;
                     return false;
 
@@ -63,7 +63,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
                 .Select(_ => new LogEventProperty(_.name, _.logEventValue));
 
-            result = new StructureValue(logEventProperties);
+            result = new StructureValue(logEventProperties, type.Name);
             return true;
         }
 
@@ -78,7 +78,10 @@ namespace Serilog.Destructure.NamedValuesHandler
                 .Select(
                     k =>
                     {
-                        var name = k.ToString();
+                        var name = propertyValueFactory.CreatePropertyValue(k, destructureObjects: true)
+                            .ToString()
+                            .Trim(trimChar: '"');
+
                         var value = dictionary[k];
                         var valueType = value.GetType();
                         return (name, value, valueType);
@@ -110,7 +113,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         private bool IsOmitted((string name, object value, Type valueType) _)
         {
-            return _omitHandlers.Any(
+            return OmitHandlers.Any(
                 h =>
                 {
                     try
@@ -137,7 +140,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         private object HandleNamedValue(string name, object value, Type valueType)
         {
-            var handleResult = _namedValueHandlers
+            var handleResult = ValueHandlers
                 .Select(
                     h =>
                     {
@@ -156,28 +159,6 @@ namespace Serilog.Destructure.NamedValuesHandler
             return handleResult == default
                 ? value
                 : handleResult.value;
-        }
-
-        public class NamedValuePolicyBuilder
-        {
-            private readonly NamedValueDestructuringPolicy _policy = new();
-
-            public NamedValuePolicyBuilder WithNamedValueHandler(Func<string, object, Type, (bool IsHandled, object value)> handler)
-            {
-                _policy._namedValueHandlers.Add(handler);
-                return this;
-            }
-
-            public NamedValuePolicyBuilder WithOmitHandler(Func<string, object, Type, bool> omitHandler)
-            {
-                _policy._omitHandlers.Add(omitHandler);
-                return this;
-            }
-
-            public NamedValueDestructuringPolicy Build()
-            {
-                return _policy;
-            }
         }
     }
 }

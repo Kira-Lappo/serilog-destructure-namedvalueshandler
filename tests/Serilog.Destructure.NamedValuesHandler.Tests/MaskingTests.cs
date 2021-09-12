@@ -22,7 +22,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
         )
         {
             // Act
-            var result = value.MaskValue(visibleCount, maskChar);
+            var result = value.Mask(visibleCount, maskChar);
 
             // Assert
             result.Should().BeEquivalentTo(expected);
