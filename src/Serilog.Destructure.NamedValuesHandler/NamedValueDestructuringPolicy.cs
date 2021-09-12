@@ -165,7 +165,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         {
             private readonly NamedValueDestructuringPolicy _policy = new();
 
-            public NamedValuePolicyBuilder WithNamedValueHandler(Func<string, object, Type, (bool IsHandled, object value)> handler)
+            public NamedValuePolicyBuilder HandleNamedValue(Func<string, object, Type, (bool IsHandled, object value)> handler)
             {
                 _policy._namedValueHandlers.Add(handler);
                 return this;

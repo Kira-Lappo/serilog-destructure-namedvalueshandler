@@ -15,22 +15,42 @@ namespace Serilog.Destructure.NamedValuesHandler
                 value => (true, handler.Invoke(value)));
         }
 
-        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue(
             this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
             string valueName,
-            Func<TValue, (bool IsHandled, TValue Value)> handler
+            Func<object, Type, (bool, object)> handler
         )
         {
-            return namedValuePolicyBuilder.HandleNamedValue<TValue>(
-                (name, value) =>
+            return namedValuePolicyBuilder.HandleNamedValue(
+                (name, value, valueType) =>
                 {
-                    if (handler == null
-                        || !string.Equals(valueName, name, StringComparison.InvariantCultureIgnoreCase))
+                    if (!string.Equals(valueName, name, StringComparison.InvariantCultureIgnoreCase))
                     {
                         return (false, value);
                     }
 
-                    return handler.Invoke(value);
+                    return handler(value, valueType);
+                });
+        }
+
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue<TValue>(
+            this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
+            string valueName,
+            Func<TValue, (bool, TValue)> handler
+        )
+        {
+            return namedValuePolicyBuilder.HandleNamedValue(
+                valueName,
+                (value, valueType) =>
+                {
+                    if (handler == null
+                        || typeof(TValue) != valueType
+                        && typeof(TValue) != value.GetType())
+                    {
+                        return (false, value);
+                    }
+
+                    return handler((TValue)value);
                 });
         }
 
@@ -48,7 +68,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             Func<string, TValue, (bool IsHandled, TValue Value)> handler
         )
         {
-            return namedValuePolicyBuilder.WithNamedValueHandler(
+            return namedValuePolicyBuilder.HandleNamedValue(
                 (name, value, valueType) =>
                 {
                     if (handler == null
@@ -60,6 +80,15 @@ namespace Serilog.Destructure.NamedValuesHandler
 
                     return handler(name, (TValue)value);
                 });
+        }
+
+        public static NamedValueDestructuringPolicy.NamedValuePolicyBuilder HandleNamedValue(
+            this NamedValueDestructuringPolicy.NamedValuePolicyBuilder namedValuePolicyBuilder,
+            Func<string, object, Type, object> handler
+        )
+        {
+            return namedValuePolicyBuilder.HandleNamedValue(
+                (name, value, valueType) => (true, handler(name, value, valueType)));
         }
     }
 }

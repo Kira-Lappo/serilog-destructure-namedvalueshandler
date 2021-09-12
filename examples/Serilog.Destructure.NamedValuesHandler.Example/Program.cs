@@ -22,7 +22,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                 .Destructure
                     .HandleValues(p => p
                         .MaskStringValue("name", visibleCharsAmount:4)
-                        .OmitNames("badAddictions", "manufacturer"))
+                        .OmitNames("badAddictions", "manufacturer")
+                        .HandleNamedValue((name, value, valueType) => "*******")
+                    )
                 .CreateLogger();
         }
 
