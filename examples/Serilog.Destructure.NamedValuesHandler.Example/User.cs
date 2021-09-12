@@ -16,6 +16,8 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
         public Car Car { get; set; }
 
         public Dictionary<string, string> Characteristics { get; set; }
+
+        public Dictionary<Car,decimal> CarPayment { get; set; }
     }
 
     public class Car

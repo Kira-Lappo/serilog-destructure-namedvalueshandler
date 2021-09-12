@@ -47,6 +47,10 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                     { "goodPartner", "yes" },
                     { "brave", "yes" },
                     { "badAddictions", "yes" },
+                },
+                CarPayment = new Dictionary<Car, decimal>
+                {
+                    { new Car{Id = Guid.NewGuid()}, 42000M }
                 }
             };
         }
