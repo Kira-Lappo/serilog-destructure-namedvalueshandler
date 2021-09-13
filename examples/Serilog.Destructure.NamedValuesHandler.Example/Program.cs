@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 using Serilog.Core;
 
 namespace Serilog.Destructure.NamedValuesHandler.Example
@@ -10,17 +11,17 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
 
         public static void Main(string[] args)
         {
-            var logger = CreateLogger();
+            var configuration = CreateConfiguration();
+            var logger = CreateLogger(configuration);
 
             var user = GetUser();
-
             logger.Information("Created user: {@User}", user);
         }
 
-        private static Logger CreateLogger()
+        private static Logger CreateLogger(IConfiguration configuration)
         {
             return new LoggerConfiguration()
-                .WriteTo.Console()
+                .ReadFrom.Configuration(configuration)
                 .Destructure
                     .HandleValues(p => p
                         .Mask("name", visibleCharsAmount:4)
@@ -58,6 +59,13 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                     { new Car{Id = Guid.NewGuid()}, 42000M }
                 }
             };
+        }
+
+        private static IConfiguration CreateConfiguration()
+        {
+            return new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
         }
     }
 }
