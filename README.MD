@@ -46,7 +46,7 @@ var logger = new LoggerConfiguration()
     .WriteTo.Console()
     .Destructure
         .HandleValues(p => p
-            .MaskStringValue("email", visibleCharsAmount:7)
+            .Mask("email", visibleCharsAmount:7)
         )
     .CreateLogger();
 ```
@@ -66,7 +66,7 @@ Let's change mask handling:
 
 ```csharp
 .HandleValues(p => p
-    .HandleNamedValue<string>(
+    .Handle<string>(
       "email",
       value => string.IsNullOrWhiteSpace(value)
           ? value
@@ -85,7 +85,7 @@ We can also omit some values so they are disappear from log message:
 
 ```csharp
 .HandleValues(p => p
-    .OmitNames("email", "age")
+    .Omit("email", "age")
 )
 ```
 ```bash
