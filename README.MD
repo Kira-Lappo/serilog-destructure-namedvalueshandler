@@ -19,7 +19,7 @@ https://www.nuget.org/packages/Serilog.Destructure.NamedValuesHandler
 
 You use Serilog and structured logging in your project.
 
-You want to mask or event omit some special values from properties of your log events.
+You want to mask or even omit some special values from properties of your log events.
 
 This package was created exactly for these purposes.
 
