@@ -11,8 +11,7 @@ https://www.nuget.org/packages/Serilog.Destructure.NamedValuesHandler
 
 ## ToDos
 
-* [ ] Cover with tests all possible use cases
-* [ ] Add more examples and use-cases
+* [ ] Investigate how Serilog handles system values(string, DateTime, etc.) at destructuring
 * [ ] Resolve todos in code
 
 ## Idea
@@ -76,13 +75,13 @@ Let's change mask handling:
 )
 ```
 
-Now we have only domain name in log message:
+Now we have only domain name in a log message:
 
 ```bash
 [01:43:25 INF] Logged User: {"Name": "John Watson", "Email": "*****@johnwatsonblog.co.uk", "Age": 42}
 ```
 
-We can also omit some values so they are disappear from log message:
+We can also omit some values so they disappear from log message:
 
 ```csharp
 .HandleValues(p => p
