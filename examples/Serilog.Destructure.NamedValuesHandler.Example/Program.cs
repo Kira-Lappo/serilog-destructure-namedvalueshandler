@@ -17,6 +17,8 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             var user = GetUser();
             logger.Information("Created user: {@User}", user);
             logger.Information("String value as a property: {StringValue}", "Sherlock Holmes");
+            logger.Information("Date before SpecialDate: {BeforeSpecialDate}", SpecialDate.AddDays(-1));
+            logger.Information("Date after SpecialDate: {AfterSpecialDate}", SpecialDate.AddDays(+1));
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
