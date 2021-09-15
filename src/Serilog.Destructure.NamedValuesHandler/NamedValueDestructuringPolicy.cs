@@ -10,11 +10,23 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     internal class NamedValueDestructuringPolicy : IDestructuringPolicy
     {
+        private const string RootValueName = "root-value-object";
         public readonly List<Func<string, object, Type, bool>>                           OmitHandlers  = new();
         public readonly List<Func<string, object, Type, (bool IsHandled, object value)>> ValueHandlers = new();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
+            var type = value?.GetType() ?? typeof(object);
+            if (!IsOmitted((RootValueName, value, type)))
+            {
+                var (isHandled, newValue) = HandleNamedValue(RootValueName, value, type);
+                if (isHandled)
+                {
+                    result = new ScalarValue(newValue);
+                    return true;
+                }
+            }
+
             switch (value)
             {
                 case null:
@@ -105,8 +117,12 @@ namespace Serilog.Destructure.NamedValuesHandler
                     nv =>
                     {
                         var (name, value, valueType) = nv;
-                        var handledValue = HandleNamedValue(name, value, valueType);
-                        var logEventProperty = CreateEventPropertyValue(handledValue, propertyValueFactory);
+                        var (isHandled, handledValue) = HandleNamedValue(name, value, valueType);
+                        var newValue = isHandled
+                            ? handledValue
+                            : value;
+
+                        var logEventProperty = CreateEventPropertyValue(newValue, propertyValueFactory);
                         return (name, logEventProperty);
                     });
         }
@@ -138,7 +154,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                 : propertyValueFactory.CreatePropertyValue(value, destructureObjects: true);
         }
 
-        private object HandleNamedValue(string name, object value, Type valueType)
+        private (bool isHandled, object value) HandleNamedValue(string name, object value, Type valueType)
         {
             var handleResult = ValueHandlers
                 .Select(
@@ -156,9 +172,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                     })
                 .FirstOrDefault(r => r.IsHandled);
 
-            return handleResult == default
-                ? value
-                : handleResult.value;
+            return handleResult;
         }
     }
 }
