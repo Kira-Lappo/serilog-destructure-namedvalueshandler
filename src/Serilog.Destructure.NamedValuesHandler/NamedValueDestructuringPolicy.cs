@@ -16,15 +16,9 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
-            var type = value?.GetType() ?? typeof(object);
-            if (!IsOmitted((RootValueName, value, type)))
+            if (TryDestructureRootValue(value, propertyValueFactory, out result))
             {
-                var (isHandled, newValue) = HandleNamedValue(RootValueName, value, type);
-                if (isHandled)
-                {
-                    result = new ScalarValue(newValue);
-                    return true;
-                }
+                return true;
             }
 
             switch (value)
@@ -46,6 +40,23 @@ namespace Serilog.Destructure.NamedValuesHandler
                 default:
                     return TryDestructureObject(value, propertyValueFactory, out result);
             }
+        }
+
+        private bool TryDestructureRootValue(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        {
+            var type = value?.GetType() ?? typeof(object);
+            if (!IsOmitted((RootValueName, value, type)))
+            {
+                var (isHandled, newValue) = HandleNamedValue(RootValueName, value, type);
+                if (isHandled)
+                {
+                    result = propertyValueFactory.CreatePropertyValue(newValue, destructureObjects: true);
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
         }
 
         private bool TryDestructureObject(

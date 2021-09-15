@@ -15,7 +15,8 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             var logger = CreateLogger(configuration);
 
             var user = GetUser();
-            logger.Information("Created user: {@User}", user);
+            // logger.Information("Created user: {@User}", user);
+            logger.Information("String value as a property: {StringValue}", "Sherlock Holmes");
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
