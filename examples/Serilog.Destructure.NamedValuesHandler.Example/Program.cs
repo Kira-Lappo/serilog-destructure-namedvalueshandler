@@ -15,10 +15,10 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             var logger = CreateLogger(configuration);
 
             var user = GetUser();
-            logger.Information("Created user: {@User}", user);
-            logger.Information("String value as a property: {StringValue}", "Sherlock Holmes");
-            logger.Information("Date before SpecialDate: {BeforeSpecialDate}", SpecialDate.AddDays(-1));
-            logger.Information("Date after SpecialDate: {AfterSpecialDate}", SpecialDate.AddDays(+1));
+            logger.Information("Created user: {@User}",                         user);
+            logger.Information("String value as a property: {@StringValue}",    "Sherlock Holmes");
+            logger.Information("Date before SpecialDate: {@BeforeSpecialDate}", SpecialDate.AddDays(value: -1));
+            logger.Information("Date after SpecialDate: {@AfterSpecialDate}",   SpecialDate.AddDays(value: +1));
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
@@ -26,12 +26,14 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             return new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Destructure
-                    .HandleValues(p => p
-                        .Mask("name", visibleCharsAmount:4)
+                .HandleValues(
+                    p => p
+                        .Mask("name", visibleCharsAmount: 4)
                         .Handle<string>((name, value) => "***")
-                        .Handle<DateTime>((name, value) => value > SpecialDate ? "DateTime.Secured" : value)
-                        .Omit("badAddictions", "manufacturer")
-                    )
+
+                        //.Handle<DateTime>((name, value) => value > SpecialDate ? "DateTime.Secured" : value)
+                        .Handle<DateTime>((name, value) => (value > SpecialDate, "DateTime.Secured")) // same rule as one above
+                        .Omit("badAddictions", "manufacturer"))
                 .CreateLogger();
         }
 
@@ -49,17 +51,23 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                     FullName        = "Bolt V8",
                     Model           = "V8 Cherry",
                     Manufacturer    = "Bolt",
-                    ManufactureDate = new DateTime(year: 1933, month: 4, day: 5),
+                    ManufactureDate = new DateTime(year: 1933, month: 4, day: 5)
                 },
                 Characteristics = new Dictionary<string, string>
                 {
                     { "goodPartner", "yes" },
                     { "brave", "yes" },
-                    { "badAddictions", "yes" },
+                    { "badAddictions", "yes" }
                 },
                 CarPayment = new Dictionary<Car, decimal>
                 {
-                    { new Car{Id = Guid.NewGuid()}, 42000M }
+                    {
+                        new Car
+                        {
+                            Id = Guid.NewGuid()
+                        },
+                        42000M
+                    }
                 }
             };
         }

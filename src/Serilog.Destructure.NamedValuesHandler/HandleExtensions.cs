@@ -70,8 +70,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             Func<string, TValue, object> handler
         )
         {
-            return namedValuePolicyBuilder.Handle<TValue>(
-                (name, value) => (true, handler(name, value)));
+            return namedValuePolicyBuilder.Handle<TValue>((name, value) => (true, handler(name, value)));
         }
 
         public static NamedValuePolicyBuilder Handle<TValue>(
@@ -98,8 +97,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             Func<string, object, Type, object> handler
         )
         {
-            return namedValuePolicyBuilder.Handle(
-                (name, value, valueType) => (true, handler(name, value, valueType)));
+            return namedValuePolicyBuilder.Handle((name, value, valueType) => (true, handler(name, value, valueType)));
         }
     }
 }

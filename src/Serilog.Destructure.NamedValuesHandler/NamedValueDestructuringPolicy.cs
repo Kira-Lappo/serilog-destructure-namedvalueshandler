@@ -10,12 +10,18 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     internal class NamedValueDestructuringPolicy : IDestructuringPolicy
     {
-        private const string RootValueName = "root-value-object";
+        private const   string                                                           RootValueName = "root-value-object";
         public readonly List<Func<string, object, Type, bool>>                           OmitHandlers  = new();
         public readonly List<Func<string, object, Type, (bool IsHandled, object value)>> ValueHandlers = new();
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
+            if (value == null)
+            {
+                result = null;
+                return false;
+            }
+
             if (TryDestructureRootValue(value, propertyValueFactory, out result))
             {
                 return true;
@@ -23,7 +29,6 @@ namespace Serilog.Destructure.NamedValuesHandler
 
             switch (value)
             {
-                case null:
                 case DateTime: // Todo [2021/09/10 KL] Need to figure it our a better way to ignore non-key-value structures
                 case Guid:
                 case Enum:
@@ -47,7 +52,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             var type = value?.GetType() ?? typeof(object);
             if (!IsOmitted((RootValueName, value, type)))
             {
-                var (isHandled, newValue) = HandleNamedValue(RootValueName, value, type);
+                var (isHandled, newValue) = HandleNamedValue((RootValueName, value, type));
                 if (isHandled)
                 {
                     result = propertyValueFactory.CreatePropertyValue(newValue, destructureObjects: true);
@@ -118,7 +123,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         }
 
         private IEnumerable<(string name, LogEventPropertyValue logEventValue)> DestructureNamedValues(
-            IEnumerable<(string, object, Type)> namedValues,
+            IEnumerable<(string Name, object Value, Type ValueType)> namedValues,
             ILogEventPropertyValueFactory propertyValueFactory
         )
         {
@@ -127,32 +132,33 @@ namespace Serilog.Destructure.NamedValuesHandler
                 .Select(
                     nv =>
                     {
-                        var (name, value, valueType) = nv;
-                        var (isHandled, handledValue) = HandleNamedValue(name, value, valueType);
+                        var (isHandled, handledValue) = HandleNamedValue(nv);
                         var newValue = isHandled
                             ? handledValue
-                            : value;
+                            : nv.Value;
 
                         var logEventProperty = CreateEventPropertyValue(newValue, propertyValueFactory);
-                        return (name, logEventProperty);
+                        return (nv.Name, logEventProperty);
                     });
         }
 
-        private bool IsOmitted((string name, object value, Type valueType) _)
+        private bool IsOmitted((string name, object value, Type valueType) namedValue)
         {
-            return OmitHandlers.Any(
-                h =>
-                {
-                    try
-                    {
-                        return h.Invoke(_.name, _.value, _.valueType);
-                    }
-                    catch (Exception e)
-                    {
-                        SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {_.name} Type: {_.valueType}. Exception: {e}");
-                        return false;
-                    }
-                });
+            return OmitHandlers.Any(h => IsOmitted(h, namedValue));
+        }
+
+        private static bool IsOmitted(Func<string, object, Type, bool> handler, (string, object, Type) namedValue)
+        {
+            var (name, value, valueType) = namedValue;
+            try
+            {
+                return handler.Invoke(name, value, valueType);
+            }
+            catch (Exception e)
+            {
+                SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {name} Type: {valueType}. Exception: {e}");
+                return false;
+            }
         }
 
         private static LogEventPropertyValue CreateEventPropertyValue(
@@ -165,25 +171,30 @@ namespace Serilog.Destructure.NamedValuesHandler
                 : propertyValueFactory.CreatePropertyValue(value, destructureObjects: true);
         }
 
-        private (bool isHandled, object value) HandleNamedValue(string name, object value, Type valueType)
+        private (bool isHandled, object value) HandleNamedValue((string, object, Type) namedValue)
         {
             var handleResult = ValueHandlers
-                .Select(
-                    h =>
-                    {
-                        try
-                        {
-                            return h.Invoke(name, value, valueType);
-                        }
-                        catch (Exception e)
-                        {
-                            SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {name} Type: {valueType}. Exception: {e}");
-                            return default;
-                        }
-                    })
+                .Select(h => HandleNamedValue(h, namedValue))
                 .FirstOrDefault(r => r.IsHandled);
 
             return handleResult;
+        }
+
+        private static (bool IsHandled, object value) HandleNamedValue(
+            Func<string, object, Type, (bool IsHandled, object value)> handler,
+            (string, object, Type) namedValue
+        )
+        {
+            var (name, value, valueType) = namedValue;
+            try
+            {
+                return handler.Invoke(name, value, valueType);
+            }
+            catch (Exception e)
+            {
+                SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {name} Type: {valueType}. Exception: {e}");
+                return default;
+            }
         }
     }
 }

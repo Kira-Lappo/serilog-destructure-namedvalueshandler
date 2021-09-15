@@ -38,8 +38,8 @@ var user = new User
 };
 ```
 
-We do want to mask doctor's email for whatever reason, but we want to keep some part of that information.
-Let's setup logger so we could see just the latest 7 characters of the email:
+We do want to mask doctor's email for whatever reason, but we want to keep some part of that information. Let's setup logger so we could see just the latest 7
+characters of the email:
 
 ```csharp
 var logger = new LoggerConfiguration()
@@ -56,6 +56,7 @@ And then let's check how it logs this object:
 ```csharp
 logger.Information("Logged User: {@User}", user);
 ```
+
 ```bash
 [01:36:10 INF] Logged User: {"Name": "John Watson", "Email": "******************************g.co.uk", "Age": 42}
 ```
@@ -88,6 +89,7 @@ We can also omit some values so they are disappear from log message:
     .Omit("email", "age")
 )
 ```
+
 ```bash
 [01:49:19 INF] Logged User: {"Name": "John Watson"}
 ```

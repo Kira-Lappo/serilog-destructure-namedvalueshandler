@@ -10,8 +10,9 @@ namespace Serilog.Destructure.NamedValuesHandler
             params string[] names
         )
         {
-            return builder.Omit((name, _, _) =>
-                names.Any(n => string.Equals(n, name, StringComparison.InvariantCultureIgnoreCase)));
+            return builder.Omit(
+                (name, _, _) =>
+                    names.Any(n => string.Equals(n, name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         public static NamedValuePolicyBuilder OmitNamespace(
