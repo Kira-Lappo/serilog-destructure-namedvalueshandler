@@ -50,18 +50,19 @@ namespace Serilog.Destructure.NamedValuesHandler
         private bool TryDestructureRootValue(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
             var type = value?.GetType() ?? typeof(object);
-            if (!IsOmitted((RootValueName, value, type)))
+            var namedValue = (RootValueName, value, type);
+            if (IsOmitted(namedValue))
             {
-                var (isHandled, newValue) = HandleNamedValue((RootValueName, value, type));
-                if (isHandled)
-                {
-                    result = propertyValueFactory.CreatePropertyValue(newValue, destructureObjects: true);
-                    return true;
-                }
+                result = null;
+                return false;
             }
 
-            result = null;
-            return false;
+            var (isHandled, newValue) = HandleNamedValue(namedValue);
+            result = isHandled
+                ? propertyValueFactory.CreatePropertyValue(newValue, destructureObjects: true)
+                : null;
+
+            return isHandled;
         }
 
         private bool TryDestructureObject(
