@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Serilog.Destructure.NamedValuesHandler
 {
@@ -6,7 +7,7 @@ namespace Serilog.Destructure.NamedValuesHandler
     {
         public static NamedValueHandlersBuilder Handle<TValue>(
             this NamedValueHandlersBuilder namedValueHandlersBuilder,
-            string valueName,
+            [MaybeNull]string valueName,
             Func<TValue, object> handler
         )
         {
@@ -17,7 +18,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueHandlersBuilder Handle(
             this NamedValueHandlersBuilder namedValueHandlersBuilder,
-            string valueName,
+            [MaybeNull]string valueName,
             Func<object, Type, object> handler
         )
         {
@@ -28,7 +29,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueHandlersBuilder Handle(
             this NamedValueHandlersBuilder namedValueHandlersBuilder,
-            string valueName,
+            [MaybeNull]string valueName,
             Func<object, Type, (bool, object)> handler
         )
         {
@@ -47,7 +48,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueHandlersBuilder Handle<TValue>(
             this NamedValueHandlersBuilder namedValueHandlersBuilder,
-            string valueName,
+            [MaybeNull]string valueName,
             Func<TValue, (bool, object)> handler
         )
         {
@@ -57,7 +58,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                 {
                     if (handler == null
                         || typeof(TValue) != valueType
-                        && typeof(TValue) != value.GetType())
+                        && typeof(TValue) != value?.GetType())
                     {
                         return (false, value);
                     }
@@ -76,7 +77,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
         public static NamedValueHandlersBuilder Handle<TValue>(
             this NamedValueHandlersBuilder namedValueHandlersBuilder,
-            Func<string, TValue, (bool IsHandled, object Value)> handler
+            Func<string, TValue, (bool, object)> handler
         )
         {
             return namedValueHandlersBuilder.Handle(
@@ -85,7 +86,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                     var (name, value, valueType) = namedValue;
                     if (handler == null
                         || typeof(TValue) != valueType
-                        && typeof(TValue) != value.GetType())
+                        && typeof(TValue) != value?.GetType())
                     {
                         return (false, value);
                     }

@@ -5,13 +5,13 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public readonly struct NamedValue
     {
-        public readonly string Name;
+        [MaybeNull] public readonly string Name;
 
-        [AllowNull] public readonly object Value;
+        [MaybeNull] public readonly object Value;
 
-        [AllowNull] public readonly Type ValueType;
+        [MaybeNull] public readonly Type ValueType;
 
-        public NamedValue(string name, object value = null, Type valueType = null)
+        public NamedValue(string name = null, object value = null, Type valueType = null)
         {
             Name      = name;
             Value     = value;

@@ -44,13 +44,34 @@ namespace Serilog.Destructure.NamedValuesHandler
                 case IDictionary dictionary:
                     return TryDestructureDictionary(dictionary, propertyValueFactory, out result);
 
-                case IEnumerable:
-                    result = null;
-                    return false;
+                case IEnumerable enumerable:
+                    return TryDestructureEnumerable(enumerable, propertyValueFactory, out result);
 
                 default:
                     return TryDestructureObject(value, propertyValueFactory, out result);
             }
+        }
+
+        private bool TryDestructureEnumerable(IEnumerable values, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
+        {
+            var handleResults = values.Cast<object>()
+                .Select(v => new NamedValue(name: null, v, v.GetType()))
+                .Where(v => !_omitHandler.IsOmitted(v))
+                .Select(v => _namedValuesHandler.HandleNamedValue(v))
+                .ToList();
+
+            if (!handleResults.Any(r => r.IsHandled))
+            {
+                result = null;
+                return false;
+            }
+
+            var propertyValues = handleResults
+                .Select(r => propertyValueFactory.CreatePropertyValue(r.Value, destructureObjects: true))
+                .ToList();
+
+            result = new SequenceValue(propertyValues);
+            return true;
         }
 
         private bool TryDestructureRootValue(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)

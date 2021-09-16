@@ -57,6 +57,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                 Name      = "John Watson",
                 Age       = 35,
                 BirthDate = new DateTime(year: 1875, month: 5, day: 6),
+                Tags      = new []{ "detective", "side-kick", "medicine" },
                 Car = new Car
                 {
                     Id              = Guid.NewGuid(),
