@@ -44,7 +44,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedValue = value[maskedKey];
             var expectedMaskedValue = maskedValue.Mask();
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Mask(maskedKey)
                 .Build();
 
@@ -71,7 +71,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             // Arrange
             var omittedKey = value.Keys.First();
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Omit(omittedKey)
                 .Build();
 
@@ -94,7 +94,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedKey = value.Keys.First();
             var omittedValue = value[omittedKey];
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .OmitType(omittedValue.GetType())
                 .Build();
 
@@ -118,7 +118,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedValue = value[omittedKey];
             var omittedNamespace = omittedValue.GetType().Namespace?.Split(".").First();
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .OmitNamespace(omittedNamespace)
                 .Build();
 
@@ -141,7 +141,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var notModifiedKey = value.Keys.First();
             var notModifiedValue = value[notModifiedKey];
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Mask($"{notModifiedKey}:masked")
                 .OmitNamespace("Special.Namespace", "Legacy")
                 .OmitType(typeof(int))

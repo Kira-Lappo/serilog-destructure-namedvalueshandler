@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using Serilog.Configuration;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests
@@ -23,7 +24,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
         public void HandleValues_NullLoggerConfiguration_ExceptionIsThrown()
         {
             // Act
-            Action action = () => SerilogExtensions.HandleValues(configuration: null, _ => { });
+            Action action = () => ((LoggerDestructuringConfiguration)null).HandleValues(_ => { });
 
             // Arrange
             action.Should().Throw<ArgumentNullException>();
@@ -36,10 +37,10 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
             var loggerConfiguration = new LoggerConfiguration();
 
             // Act
-            Action action = () => loggerConfiguration.Destructure.HandleValues(policyConfiguration: null);
+            Action action = () => loggerConfiguration.Destructure.HandleValues(destructureConfiguration: null);
 
             // Arrange
-            action.Should().Throw<ArgumentNullException>();
+            action.Should().NotThrow<ArgumentNullException>("we accept null options for destructure handler");
         }
     }
 }

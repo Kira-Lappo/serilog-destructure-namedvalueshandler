@@ -6,8 +6,17 @@ namespace Serilog.Destructure.NamedValuesHandler
     public static class SerilogExtensions
     {
         public static LoggerConfiguration HandleValues(
+            this LoggerConfiguration configuration,
+            Action<NamedValueDestructuringPolicyBuilder> destructureConfiguration
+        )
+        {
+            configuration.Destructure.HandleValues(destructureConfiguration);
+            return configuration;
+        }
+
+        internal static LoggerConfiguration HandleValues(
             this LoggerDestructuringConfiguration configuration,
-            Action<NamedValuePolicyBuilder> policyConfiguration
+            Action<NamedValueDestructuringPolicyBuilder> destructureConfiguration
         )
         {
             if (configuration == null)
@@ -15,13 +24,8 @@ namespace Serilog.Destructure.NamedValuesHandler
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            if (policyConfiguration == null)
-            {
-                throw new ArgumentNullException(nameof(policyConfiguration));
-            }
-
-            var policyBuilder = new NamedValuePolicyBuilder();
-            policyConfiguration.Invoke(policyBuilder);
+            var policyBuilder = new NamedValueDestructuringPolicyBuilder();
+            destructureConfiguration?.Invoke(policyBuilder);
             var policy = policyBuilder.Build();
 
             return configuration.With(policy);

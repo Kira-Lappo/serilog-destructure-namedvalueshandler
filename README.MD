@@ -11,15 +11,14 @@ https://www.nuget.org/packages/Serilog.Destructure.NamedValuesHandler
 
 ## ToDos
 
-* [ ] Cover with tests all possible use cases
-* [ ] Add more examples and use-cases
+* [ ] Investigate how Serilog handles system values(string, DateTime, etc.) at destructuring
 * [ ] Resolve todos in code
 
 ## Idea
 
 You use Serilog and structured logging in your project.
 
-You want to mask or event omit some special values from properties of your log events.
+You want to mask or even omit some special values from properties of your log events.
 
 This package was created exactly for these purposes.
 
@@ -38,16 +37,15 @@ var user = new User
 };
 ```
 
-We do want to mask doctor's email for whatever reason, but we want to keep some part of that information.
-Let's setup logger so we could see just the latest 7 characters of the email:
+We do want to mask doctor's email for whatever reason, but we want to keep some part of that information. Let's setup logger so we could see just the latest 7
+characters of the email:
 
 ```csharp
 var logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .Destructure
-        .HandleValues(p => p
-            .MaskStringValue("email", visibleCharsAmount:7)
-        )
+    .HandleValues(p => p
+        .Mask("email", visibleCharsAmount:7)
+    )
     .CreateLogger();
 ```
 
@@ -56,6 +54,7 @@ And then let's check how it logs this object:
 ```csharp
 logger.Information("Logged User: {@User}", user);
 ```
+
 ```bash
 [01:36:10 INF] Logged User: {"Name": "John Watson", "Email": "******************************g.co.uk", "Age": 42}
 ```
@@ -66,7 +65,7 @@ Let's change mask handling:
 
 ```csharp
 .HandleValues(p => p
-    .HandleNamedValue<string>(
+    .Handle<string>(
       "email",
       value => string.IsNullOrWhiteSpace(value)
           ? value
@@ -75,19 +74,20 @@ Let's change mask handling:
 )
 ```
 
-Now we have only domain name in log message:
+Now we have only domain name in a log message:
 
 ```bash
 [01:43:25 INF] Logged User: {"Name": "John Watson", "Email": "*****@johnwatsonblog.co.uk", "Age": 42}
 ```
 
-We can also omit some values so they are disappear from log message:
+We can also omit some values so they disappear from log message:
 
 ```csharp
 .HandleValues(p => p
-    .OmitNames("email", "age")
+    .Omit("email", "age")
 )
 ```
+
 ```bash
 [01:49:19 INF] Logged User: {"Name": "John Watson"}
 ```
