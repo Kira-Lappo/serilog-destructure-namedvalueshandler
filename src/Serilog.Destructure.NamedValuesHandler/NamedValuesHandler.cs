@@ -7,14 +7,14 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     internal class NamedValuesHandler
     {
-        private readonly List<Func<string, object, Type, (bool IsHandled, object value)>> _valueHandlers = new();
+        private readonly List<Func<NamedValue, (bool IsHandled, object value)>> _valueHandlers = new();
 
-        public void AddHandler(Func<string, object, Type, (bool IsHandled, object value)> handler)
+        public void AddHandler(Func<NamedValue, (bool IsHandled, object value)> handler)
         {
             _valueHandlers.Add(handler);
         }
 
-        public (bool isHandled, object value) HandleNamedValue((string, object, Type) namedValue)
+        public (bool isHandled, object value) HandleNamedValue(NamedValue namedValue)
         {
             var handleResult = _valueHandlers
                 .Select(h => HandleNamedValue(h, namedValue))
@@ -24,18 +24,17 @@ namespace Serilog.Destructure.NamedValuesHandler
         }
 
         private static (bool IsHandled, object value) HandleNamedValue(
-            Func<string, object, Type, (bool IsHandled, object value)> handler,
-            (string, object, Type) namedValue
+            Func<NamedValue, (bool IsHandled, object value)> handler,
+            NamedValue namedValue
         )
         {
-            var (name, value, valueType) = namedValue;
             try
             {
-                return handler.Invoke(name, value, valueType);
+                return handler.Invoke(namedValue);
             }
             catch (Exception e)
             {
-                SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {name} Type: {valueType}. Exception: {e}");
+                SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {namedValue.Name} Type: {namedValue.ValueType}. Exception: {e}");
                 return default;
             }
         }

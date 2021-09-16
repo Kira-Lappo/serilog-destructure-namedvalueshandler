@@ -16,15 +16,20 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
 
             var user = GetUser();
 
-            logger.Information("Object Destructuring: {@User}",                  user);
-            logger.Information("Dictionary Destructuring 1: {@Characteristics}", user.Characteristics);
-            logger.Information("Dictionary Destructuring 2: {@CarPayments}",     user.CarPayment);
+            logger.Information("Masked values examples");
+            logger.Information("Object Destructuring: {@User}",                                                        user);
+            logger.Information("Dictionary Destructuring 1: {@Characteristics}",                                       user.Characteristics);
+            logger.Information("Dictionary Destructuring 2: {@CarPayments}",                                           user.CarPayment);
+            logger.Information("Property value is replaced by its name 'ReplacedStringValue': {@ReplacedStringValue}", "Sherlock Holmes");
+            logger.Information("Property value is omitted by its name 'OmittedStringValue' : {@OmittedStringValue}",   "Sherlock Holmes");
 
-            logger.Information("The next values will not be deconstructed, deconstruct policy does not handle that.");
-            logger.Information("String property: {@StringValue}",                       "Sherlock Holmes");
-            logger.Information("String property (with cast to object): {@StringValue}", (object)"Sherlock Holmes");
-            logger.Information("DateTime Example 1: {@BeforeSpecialDate}",              SpecialDate.AddDays(value: -1));
-            logger.Information("DateTime Example 2: {@AfterSpecialDate}",               SpecialDate.AddDays(value: +1));
+            logger.Information("==============================================");
+
+            logger.Information("The next values will not be deconstructed or masked, custom deconstruct policy/enrichers can't handle such cases.");
+            logger.Information("Property value is NOT replaced by its type 'string': {@StringValue}",                       "Sherlock Holmes");
+            logger.Information("Property value is NOT replaced by its type 'string' (with cast to object): {@StringValue}", (object)"Sherlock Holmes");
+            logger.Information("Property value is NOT replaced by its type 'DateTime' 1: {@BeforeSpecialDate}",             SpecialDate.AddDays(value: -1));
+            logger.Information("Property value is NOT replaced by its type 'DateTime' 2: {@AfterSpecialDate}",              SpecialDate.AddDays(value: +1));
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
@@ -34,12 +39,13 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                 .HandleValues(
                     p => p
                         .Mask("name", visibleCharsAmount: 4)
+                        .Handle("ReplacedStringValue", (o, type) => "+++===+++")
                         .Handle<string>((name, value) => "***")
                         .Handle<DateTime>(
                             (name, value) => value > SpecialDate
                                 ? "DateTime.Secured"
                                 : value)
-                        .Omit("badAddictions", "manufacturer"))
+                        .Omit("badAddictions", "manufacturer", "OmittedStringValue"))
                 .CreateLogger();
         }
 

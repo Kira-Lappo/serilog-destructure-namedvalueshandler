@@ -1,5 +1,4 @@
 ﻿using System;
-using Serilog.Configuration;
 
 namespace Serilog.Destructure.NamedValuesHandler
 {
@@ -7,16 +6,7 @@ namespace Serilog.Destructure.NamedValuesHandler
     {
         public static LoggerConfiguration HandleValues(
             this LoggerConfiguration configuration,
-            Action<NamedValueDestructuringPolicyBuilder> destructureConfiguration
-        )
-        {
-            configuration.Destructure.HandleValues(destructureConfiguration);
-            return configuration;
-        }
-
-        internal static LoggerConfiguration HandleValues(
-            this LoggerDestructuringConfiguration configuration,
-            Action<NamedValueDestructuringPolicyBuilder> destructureConfiguration
+            Action<NamedValueHandlersBuilder> destructureConfiguration
         )
         {
             if (configuration == null)
@@ -24,11 +14,16 @@ namespace Serilog.Destructure.NamedValuesHandler
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var policyBuilder = new NamedValueDestructuringPolicyBuilder();
-            destructureConfiguration?.Invoke(policyBuilder);
-            var policy = policyBuilder.Build();
+            var handlersBuilder = new NamedValueHandlersBuilder();
+            destructureConfiguration?.Invoke(handlersBuilder);
 
-            return configuration.With(policy);
+            var policy = handlersBuilder.BuildDestructuringPolicy();
+            configuration.Destructure.With(policy);
+
+            var enricher = handlersBuilder.BuildEnricher();
+            configuration.Enrich.With(enricher);
+
+            return configuration;
         }
     }
 }

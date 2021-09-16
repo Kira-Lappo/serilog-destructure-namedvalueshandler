@@ -5,30 +5,29 @@ using Serilog.Debugging;
 
 namespace Serilog.Destructure.NamedValuesHandler
 {
-    public class OmitHandler
+    internal class OmitHandler
     {
-        private readonly List<Func<string, object, Type, bool>> _omitHandlers = new();
+        private readonly List<Func<NamedValue, bool>> _omitHandlers = new();
 
-        public void AddHandler(Func<string, object, Type, bool> handler)
+        public void AddHandler(Func<NamedValue, bool> handler)
         {
             _omitHandlers.Add(handler);
         }
 
-        public bool IsOmitted((string name, object value, Type valueType) namedValue)
+        public bool IsOmitted(NamedValue namedValue)
         {
             return _omitHandlers.Any(h => IsOmitted(h, namedValue));
         }
 
-        private static bool IsOmitted(Func<string, object, Type, bool> handler, (string, object, Type) namedValue)
+        private static bool IsOmitted(Func<NamedValue, bool> handler, NamedValue namedValue)
         {
-            var (name, value, valueType) = namedValue;
             try
             {
-                return handler.Invoke(name, value, valueType);
+                return handler.Invoke(namedValue);
             }
             catch (Exception e)
             {
-                SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {name} Type: {valueType}. Exception: {e}");
+                SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {namedValue.Name} Type: {namedValue.ValueType}. Exception: {e}");
                 return false;
             }
         }

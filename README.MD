@@ -24,6 +24,8 @@ This package was created exactly for these purposes.
 
 ## Usage
 
+> Check out `./examples/` folder with some examples of using the extensions and expected results.
+
 ### Log Example
 
 So you have an object to log:
@@ -92,11 +94,18 @@ We can also omit some values so they disappear from log message:
 [01:49:19 INF] Logged User: {"Name": "John Watson"}
 ```
 
+It even works ~~under water~~ for dictionaries!
+
+```bash
+[01:27:20 INF] Dictionary Destructuring 1: {"goodPartner": "***", "brave": "***"}
+```
+
 ## Special Cases : "Why It Does Not Work?"
 
-### Case 1: a property of a simple type is not masked
+### #1: A property of a simple type is not masked
 
 Setup:
+
 ```csharp
 // At logger creation
 .HandleValues(p => p
@@ -110,10 +119,12 @@ logger.Information("String property: {@StringValue}", "Sherlock Holmes");
 [00:17:32 INF] String property: Sherlock Holmes
 ```
 
-Unfortunately by existing Serilog implementation
-Destructure polices can't not affect such properties.
+Unfortunately by existing Serilog implementation destructure polices can't not affect such properties.
 
-Properties of [simple types](https://github.com/serilog/serilog/blob/13dd8cfc5ee47a841128beaef853b3798464f807/src/Serilog/Capturing/PropertyValueConverter.cs#L37)
+Properties
+of [simple types](https://github.com/serilog/serilog/blob/13dd8cfc5ee47a841128beaef853b3798464f807/src/Serilog/Capturing/PropertyValueConverter.cs#L37)
 are handled by Serilog only and are not passed to a custom Destructuring policy.
 
-Still they can be omitted
+They **can be omitted by name only** via enriches, but it can't be done by type of value of a property.
+
+Checkout example project to see how it works for different cases.

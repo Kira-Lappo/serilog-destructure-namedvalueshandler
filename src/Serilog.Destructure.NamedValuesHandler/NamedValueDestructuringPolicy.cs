@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog.Core;
-using Serilog.Debugging;
 using Serilog.Events;
 
 namespace Serilog.Destructure.NamedValuesHandler
@@ -57,7 +56,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         private bool TryDestructureRootValue(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
             var type = value?.GetType() ?? typeof(object);
-            var namedValue = (RootValueName, value, type);
+            var namedValue = new NamedValue(RootValueName, value, type);
             if (_omitHandler.IsOmitted(namedValue))
             {
                 result = null;
@@ -93,7 +92,7 @@ namespace Serilog.Destructure.NamedValuesHandler
                         var name = pi.Name;
                         var value = pi.GetValue(objectValue);
                         var valueType = pi.PropertyType;
-                        return (name, value, valueType);
+                        return new NamedValue(name, value, valueType);
                     });
 
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
@@ -120,7 +119,7 @@ namespace Serilog.Destructure.NamedValuesHandler
 
                         var value = dictionary[k];
                         var valueType = value.GetType();
-                        return (name, value, valueType);
+                        return new NamedValue(name, value, valueType);
                     });
 
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
@@ -131,7 +130,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         }
 
         private IEnumerable<(string name, LogEventPropertyValue logEventValue)> DestructureNamedValues(
-            IEnumerable<(string Name, object Value, Type ValueType)> namedValues,
+            IEnumerable<NamedValue> namedValues,
             ILogEventPropertyValueFactory propertyValueFactory
         )
         {

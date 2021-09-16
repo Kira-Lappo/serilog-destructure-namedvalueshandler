@@ -20,6 +20,6 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
 
         public ILogEventPropertyValueFactory ScalarOnlyFactory { get; }
 
-        internal NamedValueDestructuringPolicy EmptyPolicy => new NamedValueDestructuringPolicyBuilder().Build();
+        internal NamedValueDestructuringPolicy EmptyPolicy => new NamedValueHandlersBuilder().BuildDestructuringPolicy();
     }
 }

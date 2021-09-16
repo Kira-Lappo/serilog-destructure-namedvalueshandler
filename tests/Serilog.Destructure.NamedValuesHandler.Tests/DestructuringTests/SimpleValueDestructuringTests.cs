@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Serilog.Core;
 using Serilog.Events;
 using Xunit;
@@ -17,9 +15,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
         {
             // Arrange
             const string Mask = "******";
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Handle<string>((_, _) => Mask)
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
