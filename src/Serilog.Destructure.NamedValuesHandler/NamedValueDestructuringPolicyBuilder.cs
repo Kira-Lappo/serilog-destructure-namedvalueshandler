@@ -2,17 +2,17 @@ using System;
 
 namespace Serilog.Destructure.NamedValuesHandler
 {
-    public class NamedValuePolicyBuilder
+    public class NamedValueDestructuringPolicyBuilder
     {
         private readonly NamedValueDestructuringPolicy _policy = new();
 
-        public NamedValuePolicyBuilder Handle(Func<string, object, Type, (bool IsHandled, object value)> handler)
+        public NamedValueDestructuringPolicyBuilder Handle(Func<string, object, Type, (bool IsHandled, object value)> handler)
         {
             _policy.ValueHandlers.Add(handler);
             return this;
         }
 
-        public NamedValuePolicyBuilder Omit(Func<string, object, Type, bool> omitHandler)
+        public NamedValueDestructuringPolicyBuilder Omit(Func<string, object, Type, bool> omitHandler)
         {
             _policy.OmitHandlers.Add(omitHandler);
             return this;

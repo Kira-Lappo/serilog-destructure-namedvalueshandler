@@ -18,7 +18,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedName = nameof(value.Name);
             var maskedValue = new ScalarValue(value.Name);
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Handle(
                     maskedName,
                     new Func<string, string>(
@@ -47,7 +47,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedName = nameof(value.Name);
             var maskedValue = new ScalarValue(value.Name);
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Omit(
                     (_, _, _) =>
                         throw new Exception(nameof(TryDestructure_OmitterThrowsException_ValueIsNotOmitted)))
@@ -74,7 +74,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedName = nameof(value.Name);
             var expectedMaskedValue = new ScalarValue(value: null);
 
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Handle(
                     maskedName,
                     new Func<string, string>(_ => null))

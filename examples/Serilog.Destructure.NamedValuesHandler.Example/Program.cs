@@ -15,24 +15,25 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             var logger = CreateLogger(configuration);
 
             var user = GetUser();
-            logger.Information("Created user: {@User}",                         user);
-            logger.Information("String value as a property: {@StringValue}",    "Sherlock Holmes");
-            logger.Information("Date before SpecialDate: {@BeforeSpecialDate}", SpecialDate.AddDays(value: -1));
-            logger.Information("Date after SpecialDate: {@AfterSpecialDate}",   SpecialDate.AddDays(value: +1));
+            logger.Information("Created user: {@User}", user);
+            logger.Information("The next values will not be deconstructed, deconstruct policy does not handle that.");
+            logger.Information("String property: {@StringValue}",          "Sherlock Holmes");
+            logger.Information("DateTime Example 1: {@BeforeSpecialDate}", SpecialDate.AddDays(value: -1));
+            logger.Information("DateTime Example 2: {@AfterSpecialDate}",  SpecialDate.AddDays(value: +1));
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
         {
             return new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
-                .Destructure
                 .HandleValues(
                     p => p
                         .Mask("name", visibleCharsAmount: 4)
                         .Handle<string>((name, value) => "***")
-
-                        //.Handle<DateTime>((name, value) => value > SpecialDate ? "DateTime.Secured" : value)
-                        .Handle<DateTime>((name, value) => (value > SpecialDate, "DateTime.Secured")) // same rule as one above
+                        .Handle<DateTime>(
+                            (name, value) => value > SpecialDate
+                                ? "DateTime.Secured"
+                                : value)
                         .Omit("badAddictions", "manufacturer"))
                 .CreateLogger();
         }

@@ -43,10 +43,9 @@ characters of the email:
 ```csharp
 var logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .Destructure
-        .HandleValues(p => p
-            .Mask("email", visibleCharsAmount:7)
-        )
+    .HandleValues(p => p
+        .Mask("email", visibleCharsAmount:7)
+    )
     .CreateLogger();
 ```
 

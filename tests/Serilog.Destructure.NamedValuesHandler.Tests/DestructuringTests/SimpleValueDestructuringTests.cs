@@ -17,7 +17,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
         {
             // Arrange
             const string Mask = "******";
-            var policy = new NamedValuePolicyBuilder()
+            var policy = new NamedValueDestructuringPolicyBuilder()
                 .Handle<string>((_, _) => Mask)
                 .Build();
 
