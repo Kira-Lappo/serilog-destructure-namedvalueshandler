@@ -91,3 +91,29 @@ We can also omit some values so they disappear from log message:
 ```bash
 [01:49:19 INF] Logged User: {"Name": "John Watson"}
 ```
+
+## Special Cases : "Why It Does Not Work?"
+
+### Case 1: a property of a simple type is not masked
+
+Setup:
+```csharp
+// At logger creation
+.HandleValues(p => p
+    .Handle<string>((name, value) => "***")
+)
+
+// Log event
+logger.Information("String property: {@StringValue}", "Sherlock Holmes");
+
+// Log message
+[00:17:32 INF] String property: Sherlock Holmes
+```
+
+Unfortunately by existing Serilog implementation
+Destructure polices can't not affect such properties.
+
+Properties of [simple types](https://github.com/serilog/serilog/blob/13dd8cfc5ee47a841128beaef853b3798464f807/src/Serilog/Capturing/PropertyValueConverter.cs#L37)
+are handled by Serilog only and are not passed to a custom Destructuring policy.
+
+Still they can be omitted

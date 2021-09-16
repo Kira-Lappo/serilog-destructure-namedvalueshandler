@@ -15,11 +15,16 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             var logger = CreateLogger(configuration);
 
             var user = GetUser();
-            logger.Information("Created user: {@User}", user);
+
+            logger.Information("Object Destructuring: {@User}",                  user);
+            logger.Information("Dictionary Destructuring 1: {@Characteristics}", user.Characteristics);
+            logger.Information("Dictionary Destructuring 2: {@CarPayments}",     user.CarPayment);
+
             logger.Information("The next values will not be deconstructed, deconstruct policy does not handle that.");
-            logger.Information("String property: {@StringValue}",          "Sherlock Holmes");
-            logger.Information("DateTime Example 1: {@BeforeSpecialDate}", SpecialDate.AddDays(value: -1));
-            logger.Information("DateTime Example 2: {@AfterSpecialDate}",  SpecialDate.AddDays(value: +1));
+            logger.Information("String property: {@StringValue}",                       "Sherlock Holmes");
+            logger.Information("String property (with cast to object): {@StringValue}", (object)"Sherlock Holmes");
+            logger.Information("DateTime Example 1: {@BeforeSpecialDate}",              SpecialDate.AddDays(value: -1));
+            logger.Information("DateTime Example 2: {@AfterSpecialDate}",               SpecialDate.AddDays(value: +1));
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
