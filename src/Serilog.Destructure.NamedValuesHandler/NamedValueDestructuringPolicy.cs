@@ -10,9 +10,16 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     internal class NamedValueDestructuringPolicy : IDestructuringPolicy
     {
-        private const   string                                                           RootValueName = "root-value-object";
-        public readonly List<Func<string, object, Type, bool>>                           OmitHandlers  = new();
-        public readonly List<Func<string, object, Type, (bool IsHandled, object value)>> ValueHandlers = new();
+        private const string RootValueName = "root-value-object";
+
+        private readonly OmitHandler        _omitHandler;
+        private readonly NamedValuesHandler _namedValuesHandler;
+
+        public NamedValueDestructuringPolicy(NamedValuesHandler namedValuesHandler, OmitHandler omitHandler)
+        {
+            _namedValuesHandler = namedValuesHandler;
+            _omitHandler        = omitHandler;
+        }
 
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, out LogEventPropertyValue result)
         {
@@ -51,13 +58,13 @@ namespace Serilog.Destructure.NamedValuesHandler
         {
             var type = value?.GetType() ?? typeof(object);
             var namedValue = (RootValueName, value, type);
-            if (IsOmitted(namedValue))
+            if (_omitHandler.IsOmitted(namedValue))
             {
                 result = null;
                 return false;
             }
 
-            var (isHandled, newValue) = HandleNamedValue(namedValue);
+            var (isHandled, newValue) = _namedValuesHandler.HandleNamedValue(namedValue);
             result = isHandled
                 ? propertyValueFactory.CreatePropertyValue(newValue, destructureObjects: true)
                 : null;
@@ -129,11 +136,11 @@ namespace Serilog.Destructure.NamedValuesHandler
         )
         {
             return namedValues
-                .Where(nv => !IsOmitted(nv))
+                .Where(nv => !_omitHandler.IsOmitted(nv))
                 .Select(
                     nv =>
                     {
-                        var (isHandled, handledValue) = HandleNamedValue(nv);
+                        var (isHandled, handledValue) = _namedValuesHandler.HandleNamedValue(nv);
                         var newValue = isHandled
                             ? handledValue
                             : nv.Value;
@@ -141,25 +148,6 @@ namespace Serilog.Destructure.NamedValuesHandler
                         var logEventProperty = CreateEventPropertyValue(newValue, propertyValueFactory);
                         return (nv.Name, logEventProperty);
                     });
-        }
-
-        private bool IsOmitted((string name, object value, Type valueType) namedValue)
-        {
-            return OmitHandlers.Any(h => IsOmitted(h, namedValue));
-        }
-
-        private static bool IsOmitted(Func<string, object, Type, bool> handler, (string, object, Type) namedValue)
-        {
-            var (name, value, valueType) = namedValue;
-            try
-            {
-                return handler.Invoke(name, value, valueType);
-            }
-            catch (Exception e)
-            {
-                SelfLog.WriteLine($"Error at omit check, the value is not omitted. Name: {name} Type: {valueType}. Exception: {e}");
-                return false;
-            }
         }
 
         private static LogEventPropertyValue CreateEventPropertyValue(
@@ -170,32 +158,6 @@ namespace Serilog.Destructure.NamedValuesHandler
             return value == null
                 ? new ScalarValue(value: null)
                 : propertyValueFactory.CreatePropertyValue(value, destructureObjects: true);
-        }
-
-        private (bool isHandled, object value) HandleNamedValue((string, object, Type) namedValue)
-        {
-            var handleResult = ValueHandlers
-                .Select(h => HandleNamedValue(h, namedValue))
-                .FirstOrDefault(r => r.IsHandled);
-
-            return handleResult;
-        }
-
-        private static (bool IsHandled, object value) HandleNamedValue(
-            Func<string, object, Type, (bool IsHandled, object value)> handler,
-            (string, object, Type) namedValue
-        )
-        {
-            var (name, value, valueType) = namedValue;
-            try
-            {
-                return handler.Invoke(name, value, valueType);
-            }
-            catch (Exception e)
-            {
-                SelfLog.WriteLine($"Error at handling value, the value is not modified. Name: {name} Type: {valueType}. Exception: {e}");
-                return default;
-            }
         }
     }
 }

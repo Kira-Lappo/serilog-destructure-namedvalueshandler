@@ -34,7 +34,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
         public void TryDestructure_ValueCanNotBeDestructured_NotDestructured(object value)
         {
             // Arrange
-            var policy = new NamedValueDestructuringPolicy();
+            var policy = ValueFactories.Instance.EmptyPolicy;
 
             // Act
             var isDestructured = policy.TryDestructure(value, ScalarOnlyFactory, out var result);

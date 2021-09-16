@@ -16,7 +16,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
         {
             // Arrange
             var expectedProperties = value.GetType().GetProperties();
-            var policy = new NamedValueDestructuringPolicy();
+            var policy = ValueFactories.Instance.EmptyPolicy;
 
             // Act
             var isDestructured = policy.TryDestructure(value, ScalarOnlyFactory, out var result);

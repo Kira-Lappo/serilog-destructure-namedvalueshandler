@@ -4,23 +4,24 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     public class NamedValueDestructuringPolicyBuilder
     {
-        private readonly NamedValueDestructuringPolicy _policy = new();
+        private readonly OmitHandler _omitHandler = new();
+        private readonly NamedValuesHandler _namedValuesHandler = new();
 
         public NamedValueDestructuringPolicyBuilder Handle(Func<string, object, Type, (bool IsHandled, object value)> handler)
         {
-            _policy.ValueHandlers.Add(handler);
+            _namedValuesHandler.AddHandler(handler);
             return this;
         }
 
-        public NamedValueDestructuringPolicyBuilder Omit(Func<string, object, Type, bool> omitHandler)
+        public NamedValueDestructuringPolicyBuilder Omit(Func<string, object, Type, bool> handler)
         {
-            _policy.OmitHandlers.Add(omitHandler);
+            _omitHandler.AddHandler(handler);
             return this;
         }
 
         internal NamedValueDestructuringPolicy Build()
         {
-            return _policy;
+            return new(_namedValuesHandler, _omitHandler);
         }
     }
 }

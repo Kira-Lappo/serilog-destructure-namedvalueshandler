@@ -16,7 +16,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
         public void TryDestructureDictionary_HappyPath_ValueIsDestructed(Dictionary<string, string> value)
         {
             // Arrange
-            var policy = new NamedValueDestructuringPolicy();
+            var policy = ValueFactories.Instance.EmptyPolicy;
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);

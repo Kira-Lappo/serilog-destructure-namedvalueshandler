@@ -19,5 +19,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
         public static ValueFactories Instance { get; } = new();
 
         public ILogEventPropertyValueFactory ScalarOnlyFactory { get; }
+
+        internal NamedValueDestructuringPolicy EmptyPolicy => new NamedValueDestructuringPolicyBuilder().Build();
     }
 }
