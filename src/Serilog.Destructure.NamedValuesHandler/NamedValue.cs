@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Serilog.Destructure.NamedValuesHandler
@@ -18,6 +19,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             ValueType = valueType;
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void Deconstruct(out string name, out object value, out Type valueType)
         {
             name      = Name;
