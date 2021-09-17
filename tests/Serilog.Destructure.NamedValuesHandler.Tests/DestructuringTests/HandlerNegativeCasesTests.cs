@@ -1,15 +1,12 @@
 using System;
 using FluentAssertions;
-using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public class HandlerNegativeCasesTests
+    public class HandlerNegativeCasesTests : AbstractDestructuringTests
     {
-        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
-
         [Theory]
         [AutoMoqData]
         public void TryDestructure_ValueHandlerThrowsException_ValueIsNotModified(DestructibleEntity value)

@@ -1,15 +1,12 @@
 ﻿using System.Linq;
 using FluentAssertions;
-using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public class ObjectDestructuringTests
+    public class ObjectDestructuringTests : AbstractDestructuringTests
     {
-        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
-
         [Theory]
         [AutoMoqData]
         public void TryDestructureObject_HappyPath_PropertiesAreDestructured(DestructibleEntity value)
