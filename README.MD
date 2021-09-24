@@ -1,6 +1,10 @@
 # Serilog.Destructure.NamedValuesHandler
 
+[
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/Kira-Lappo/serilog-destructure-namedvalueshandler/Build%20And%20Test/dev?label=dev&style=for-the-badge)
+](
+https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler/actions/workflows/build.yml
+)
 [
 ![Nuget](https://img.shields.io/nuget/v/Serilog.Destructure.NamedValuesHandler?style=for-the-badge)
 ](
