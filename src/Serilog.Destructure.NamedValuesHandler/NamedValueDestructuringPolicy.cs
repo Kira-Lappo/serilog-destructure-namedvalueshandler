@@ -119,7 +119,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             var logEventProperties = DestructureNamedValues(namedValues, propertyValueFactory)
                 .Select(_ => new LogEventProperty(_.name, _.logEventValue));
 
-            result = new StructureValue(logEventProperties, type.Name);
+            result = new StructureValue(logEventProperties, type.FullName);
             return true;
         }
 

@@ -16,12 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.10.0"/>
+    <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../README.MD" Pack="true" PackagePath="/"/>
-    <None Include="./Assets/icon.png" Pack="true" PackagePath="/"/>
+    <None Include="../../README.MD" Pack="true" PackagePath="/" />
+    <None Include="./Assets/icon.png" Pack="true" PackagePath="/" />
   </ItemGroup>
 
 </Project>

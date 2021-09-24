@@ -7,14 +7,14 @@ namespace Serilog.Destructure.NamedValuesHandler
 {
     internal class NamedValuesHandler
     {
-        private readonly List<Func<NamedValue, (bool IsHandled, object Value)>> _valueHandlers = new();
+        private readonly List<Func<NamedValue, HandledValue>> _valueHandlers = new();
 
-        public void AddHandler(Func<NamedValue, (bool IsHandled, object Value)> handler)
+        public void AddHandler(Func<NamedValue, HandledValue> handler)
         {
             _valueHandlers.Add(handler);
         }
 
-        public (bool IsHandled, object Value) HandleNamedValue(NamedValue namedValue)
+        public HandledValue HandleNamedValue(NamedValue namedValue)
         {
             var handleResult = _valueHandlers
                 .Select(h => HandleNamedValue(h, namedValue))
@@ -23,8 +23,8 @@ namespace Serilog.Destructure.NamedValuesHandler
             return handleResult;
         }
 
-        private static (bool IsHandled, object Value) HandleNamedValue(
-            Func<NamedValue, (bool IsHandled, object Value)> handler,
+        private static HandledValue HandleNamedValue(
+            Func<NamedValue, HandledValue> handler,
             NamedValue namedValue
         )
         {

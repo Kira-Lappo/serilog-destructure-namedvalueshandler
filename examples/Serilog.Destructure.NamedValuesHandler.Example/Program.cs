@@ -18,6 +18,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
 
             logger.Information("Masked values examples");
             logger.Information("Object Destructuring: {@User}",                                                        user);
+            logger.Information("Array of Objects Destructuring: {@UserArray}",                                         new[] { user });
             logger.Information("Dictionary Destructuring 1: {@Characteristics}",                                       user.Characteristics);
             logger.Information("Dictionary Destructuring 2: {@CarPayments}",                                           user.CarPayment);
             logger.Information("Property value is replaced by its name 'ReplacedStringValue': {@ReplacedStringValue}", "Sherlock Holmes");
@@ -32,22 +33,24 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
             logger.Information("Property value is NOT replaced by its type 'DateTime' 2: {@AfterSpecialDate}",              SpecialDate.AddDays(value: +1));
 
             // Output
-            // [01:57:06 INF] Masked values examples
-            // [01:57:06 INF] Object Destructuring: {"Id": "71570f6a-05f4-4884-970b-34918af003a3", "Name": "*******tson", "Age": 35, "BirthDate": "1875-05-06T00:00:00.0000000", "Car": {"Id": "6
-            // 1b032f1-a71c-452f-b811-c4c9ff98a2c3", "FullName": "***", "Model": "***", "ManufactureDate": "DateTime.Secured", "$type": "Car"}, "Characteristics": {"goodPartner": "***", "brave"
-            // : "***"}, "CarPayment": {"Car { Id: fbd8921c-fd3a-4646-9600-e4b916cbe54f, FullName: \"***\", Model: \"***\", ManufactureDate: 01/01/0001 00:00:00 }": 42000}, "Tags": ["***", "***
+            // [16:12:34 INF] Masked values examples
+            // [16:12:34 INF] Object Destructuring: {"Id": "705c97d8-98a7-484d-ad72-b9b6f124cc2b", "Name": "*******tson", "Age": 35, "BirthDate": "1875-05-06T00:00:00.0000000", "Car": {"Id": "8
+            // 18f2664-00b2-462e-b86f-05fa36f859fd", "FullName": "***", "Model": "***", "ManufactureDate": "DateTime.Secured", "$type": "Car"}, "Characteristics": {"goodPartner": "***", "brave"
+            // : "***"}, "CarPayment": {"Car { Id: 30d52acb-75b3-4537-b5ad-0769490014bc, FullName: \"***\", Model: \"***\", ManufactureDate: 01/01/0001 00:00:00 }": 42000}, "Tags": ["***", "***
             // ", "***"], "$type": "User"}
-            // [01:57:06 INF] Dictionary Destructuring 1: {"goodPartner": "***", "brave": "***"}
-            // [01:57:06 INF] Dictionary Destructuring 2: {"Car { Id: fbd8921c-fd3a-4646-9600-e4b916cbe54f, FullName: \"***\", Model: \"***\", ManufactureDate: 01/01/0001 00:00:00 }": 42000}
-            // [01:57:06 INF] Property value is replaced by its name 'ReplacedStringValue': +++===+++
-            // [01:57:06 INF] Property value is omitted by its name 'OmittedStringValue' : {@OmittedStringValue}
-            // [01:57:06 INF] ==============================================
-            // [01:57:06 INF] The next values will not be deconstructed or masked, custom deconstruct policy/enrichers can't handle such cases.
-            // [01:57:06 INF] Property value is NOT replaced by its type 'string': Sherlock Holmes
-            // [01:57:06 INF] Property value is NOT replaced by its type 'string' (with cast to object): Sherlock Holmes
-            // [01:57:06 INF] Property value is NOT replaced by its type 'DateTime' 1: 12/31/1904 00:00:00
-            // [01:57:06 INF] Property value is NOT replaced by its type 'DateTime' 2: 01/02/1905 00:00:00
-
+            // [16:12:34 INF] Object Destructuring: [{"Id": "705c97d8-98a7-484d-ad72-b9b6f124cc2b", "Name": "*******tson", "Age": 35, "BirthDate": "1875-05-06T00:00:00.0000000", "Car": {"Id": "
+            // 818f2664-00b2-462e-b86f-05fa36f859fd", "FullName": "***", "Model": "***", "ManufactureDate": "DateTime.Secured", "$type": "Car"}, "Characteristics": {"goodPartner": "***", "brave
+            // ": "***"}, "CarPayment": {"Car { Id: null, FullName: null, Model: null, ManufactureDate: null }": 42000}, "Tags": ["***", "***", "***"], "$type": "User"}]
+            // [16:12:34 INF] Dictionary Destructuring 1: {"goodPartner": "***", "brave": "***"}
+            // [16:12:34 INF] Dictionary Destructuring 2: {"Car { Id: 30d52acb-75b3-4537-b5ad-0769490014bc, FullName: \"***\", Model: \"***\", ManufactureDate: 01/01/0001 00:00:00 }": 42000}
+            // [16:12:34 INF] Property value is replaced by its name 'ReplacedStringValue': +++===+++
+            // [16:12:34 INF] Property value is omitted by its name 'OmittedStringValue' : {@OmittedStringValue}
+            // [16:12:34 INF] ==============================================
+            // [16:12:34 INF] The next values will not be deconstructed or masked, custom deconstruct policy/enrichers can't handle such cases.
+            // [16:12:34 INF] Property value is NOT replaced by its type 'string': Sherlock Holmes
+            // [16:12:34 INF] Property value is NOT replaced by its type 'string' (with cast to object): Sherlock Holmes
+            // [16:12:34 INF] Property value is NOT replaced by its type 'DateTime' 1: 12/31/1904 00:00:00
+            // [16:12:34 INF] Property value is NOT replaced by its type 'DateTime' 2: 01/02/1905 00:00:00
         }
 
         private static Logger CreateLogger(IConfiguration configuration)
@@ -75,7 +78,12 @@ namespace Serilog.Destructure.NamedValuesHandler.Example
                 Name      = "John Watson",
                 Age       = 35,
                 BirthDate = new DateTime(year: 1875, month: 5, day: 6),
-                Tags      = new []{ "detective", "side-kick", "medicine" },
+                Tags = new HashSet<string>
+                {
+                    "detective",
+                    "side-kick",
+                    "medicine"
+                },
                 Car = new Car
                 {
                     Id              = Guid.NewGuid(),

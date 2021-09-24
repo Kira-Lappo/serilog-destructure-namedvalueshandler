@@ -7,7 +7,7 @@ namespace Serilog.Destructure.NamedValuesHandler
         private readonly OmitHandler        _omitHandler        = new();
         private readonly NamedValuesHandler _namedValuesHandler = new();
 
-        public NamedValueHandlersBuilder Handle(Func<NamedValue, (bool IsHandled, object Value)> handler)
+        public NamedValueHandlersBuilder Handle(Func<NamedValue, HandledValue> handler)
         {
             _namedValuesHandler.AddHandler(handler);
             return this;
