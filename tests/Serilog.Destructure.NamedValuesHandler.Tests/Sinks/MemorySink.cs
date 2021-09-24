@@ -4,7 +4,7 @@ using Serilog.Events;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.Sinks
 {
-    public class ListSink : ILogEventSink, ILogEventsProvider
+    public class MemorySink : ILogEventSink, ILogEventsProvider
     {
         private readonly List<LogEvent> _logEvents = new();
 

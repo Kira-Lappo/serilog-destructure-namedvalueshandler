@@ -67,6 +67,7 @@ namespace Serilog.Destructure.NamedValuesHandler
             }
 
             var propertyValues = handleResults
+                // Bug [2021/09/24 KL] CreatePropertyValue returns nulls instead of destructuring values - we have a failing test
                 .Select(r => propertyValueFactory.CreatePropertyValue(r.Value, destructureObjects: true))
                 .ToList();
 

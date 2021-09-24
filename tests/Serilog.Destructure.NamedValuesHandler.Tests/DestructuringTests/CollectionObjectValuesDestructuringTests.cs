@@ -18,7 +18,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             // Arrange
             const string Mask = "******";
             var logger = new LoggerConfiguration()
-                .WriteTo.List(out var logEventsProvider)
+                .WriteTo.Memory(out var logEventsProvider)
                 .HandleValues(p =>
                     p.Handle<DestructibleEntity>((_, value) =>
                     {
