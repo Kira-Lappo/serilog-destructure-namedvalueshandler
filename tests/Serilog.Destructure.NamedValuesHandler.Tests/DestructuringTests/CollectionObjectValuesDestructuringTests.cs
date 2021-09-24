@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using FluentAssertions;
 using Newtonsoft.Json;
+using Serilog.Destructure.NamedValuesHandler.Tests.Sinks;
 using Serilog.Events;
 using Xunit;
 
@@ -12,29 +13,34 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
     {
         [Theory]
         [AutoMoqData]
-        public void TryDestructureArray_HandleAllValuesShouldBeMasked_ValuesAreMasked(IEnumerable<DestructibleEntity> values)
+        public void TryDestructureArray_HandleAllValuesShouldBeMasked_ValuesAreMasked(ICollection<DestructibleEntity> values)
         {
             // Arrange
             const string Mask = "******";
-            var policy = new NamedValueHandlersBuilder()
-                .Handle<DestructibleEntity>((_, value) =>
-                {
-                    value.Name = Mask;
-                    return value;
-                })
-                .BuildDestructuringPolicy();
+            var logger = new LoggerConfiguration()
+                .WriteTo.List(out var logEventsProvider)
+                .HandleValues(p =>
+                    p.Handle<DestructibleEntity>((_, value) =>
+                    {
+                        value.Name = Mask;
+                        return value;
+                    }))
+                .CreateLogger();
 
             // Act
-            var isHandled = policy.TryDestructure(values, ScalarOnlyFactory, out var result);
+            logger.Information("{@Values}", values);
 
             // Assert
-            isHandled.Should().BeTrue();
-            result.Should().NotBeNull();
-            result.Should().BeOfType<SequenceValue>();
+            var logEvents = logEventsProvider.GetLogEvents();
+            var eventValues = logEvents.SelectAllPropertyValues("Values");
+            eventValues.Should().ContainSingle();
 
-            var sequenceResult = (SequenceValue)result;
-            sequenceResult.Elements.Should().HaveCount(values.Count());
-            sequenceResult.Elements
+            var eventValue = eventValues.First();
+            eventValue.Should().BeOfType<SequenceValue>();
+
+            var logEventPropertyValues = ((SequenceValue)eventValue).Elements;
+            logEventPropertyValues.Should().HaveCount(values.Count);
+            logEventPropertyValues
                 .Select(e =>
                 {
                     using var sw = new StringWriter();
