@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using FluentAssertions;
-using Serilog.Core;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public class NonDestructuredObjectDestructuringTests
+    public class NonDestructuredObjectDestructuringTests : AbstractDestructuringTests
     {
-        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
-
         public static IEnumerable<object[]> NonDestructibleValues => new[]
         {
             new object[] { null },
@@ -34,7 +31,7 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
         public void TryDestructure_ValueCanNotBeDestructured_NotDestructured(object value)
         {
             // Arrange
-            var policy = new NamedValueDestructuringPolicy();
+            var policy = ValueFactories.Instance.EmptyPolicy;
 
             // Act
             var isDestructured = policy.TryDestructure(value, ScalarOnlyFactory, out var result);

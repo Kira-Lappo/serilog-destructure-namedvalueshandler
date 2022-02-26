@@ -1,22 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public class DictionaryDestructuringTests
+    public class DictionaryDestructuringTests : AbstractDestructuringTests
     {
-        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
-
         [Theory]
         [AutoMoqData]
         public void TryDestructureDictionary_HappyPath_ValueIsDestructed(Dictionary<string, string> value)
         {
             // Arrange
-            var policy = new NamedValueDestructuringPolicy();
+            var policy = ValueFactories.Instance.EmptyPolicy;
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
@@ -44,9 +41,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedValue = value[maskedKey];
             var expectedMaskedValue = maskedValue.Mask();
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Mask(maskedKey)
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
@@ -71,9 +68,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             // Arrange
             var omittedKey = value.Keys.First();
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Omit(omittedKey)
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
@@ -94,9 +91,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedKey = value.Keys.First();
             var omittedValue = value[omittedKey];
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .OmitType(omittedValue.GetType())
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
@@ -118,9 +115,9 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var omittedValue = value[omittedKey];
             var omittedNamespace = omittedValue.GetType().Namespace?.Split(".").First();
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .OmitNamespace(omittedNamespace)
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);
@@ -141,12 +138,12 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var notModifiedKey = value.Keys.First();
             var notModifiedValue = value[notModifiedKey];
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Mask($"{notModifiedKey}:masked")
                 .OmitNamespace("Special.Namespace", "Legacy")
                 .OmitType(typeof(int))
                 .Omit($"{notModifiedKey}:omitted")
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);

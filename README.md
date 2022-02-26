@@ -1,6 +1,10 @@
 # Serilog.Destructure.NamedValuesHandler
 
+[
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/Kira-Lappo/serilog-destructure-namedvalueshandler/Build%20And%20Test/dev?label=dev&style=for-the-badge)
+](
+https://github.com/Kira-Lappo/serilog-destructure-namedvalueshandler/actions/workflows/build.yml
+)
 [
 ![Nuget](https://img.shields.io/nuget/v/Serilog.Destructure.NamedValuesHandler?style=for-the-badge)
 ](
@@ -23,6 +27,8 @@ You want to mask or even omit some special values from properties of your log ev
 This package was created exactly for these purposes.
 
 ## Usage
+
+> Check out `./examples/` folder with some examples of using the extensions and expected results.
 
 ### Log Example
 
@@ -91,3 +97,38 @@ We can also omit some values so they disappear from log message:
 ```bash
 [01:49:19 INF] Logged User: {"Name": "John Watson"}
 ```
+
+It even works ~~under water~~ for dictionaries!
+
+```bash
+[01:27:20 INF] Dictionary Destructuring 1: {"goodPartner": "***", "brave": "***"}
+```
+
+## Special Cases : "Why It Does Not Work?"
+
+### #1: A property of a simple type is not masked
+
+Setup:
+
+```csharp
+// At logger creation
+.HandleValues(p => p
+    .Handle<string>((name, value) => "***")
+)
+
+// Log event
+logger.Information("String property: {@StringValue}", "Sherlock Holmes");
+
+// Log message
+[00:17:32 INF] String property: Sherlock Holmes
+```
+
+Unfortunately by existing Serilog implementation destructure polices can't not affect such properties.
+
+Properties
+of [simple types](https://github.com/serilog/serilog/blob/13dd8cfc5ee47a841128beaef853b3798464f807/src/Serilog/Capturing/PropertyValueConverter.cs#L37)
+are handled by Serilog only and are not passed to a custom Destructuring policy.
+
+They **can be omitted by name only** via enriches, but it can't be done by type of value of a property.
+
+Checkout example project to see how it works for different cases.

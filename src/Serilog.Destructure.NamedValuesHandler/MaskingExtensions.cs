@@ -4,14 +4,14 @@
     {
         private const char DefaultMaskChar = '*';
 
-        public static NamedValueDestructuringPolicyBuilder Mask(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
+        public static NamedValueHandlersBuilder Mask(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
             string name,
             int? visibleCharsAmount = null,
             char maskChar = DefaultMaskChar
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle(
+            return namedValueHandlersBuilder.Handle(
                 name,
                 (value, type) => (value?.ToString()).Mask(visibleCharsAmount, maskChar));
         }

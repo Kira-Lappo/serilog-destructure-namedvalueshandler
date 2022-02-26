@@ -1,25 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
-using Serilog.Core;
+﻿using FluentAssertions;
 using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public class SimpleValueDestructuringTests
+    public class SimpleValueDestructuringTests : AbstractDestructuringTests
     {
-        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
-
         [Theory]
         [AutoMoqData]
-        public void TryDestructureString_HandleAllStringsShouldBeMasked_StringValueIsMasked(string value)
+        public void TryDestructureString_HappyPath_StringValueIsMasked(string value)
         {
             // Arrange
             const string Mask = "******";
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Handle<string>((_, _) => Mask)
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             var isHandled = policy.TryDestructure(value, ScalarOnlyFactory, out var result);

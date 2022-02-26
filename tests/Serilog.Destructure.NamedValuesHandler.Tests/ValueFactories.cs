@@ -8,16 +8,18 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests
     {
         private ValueFactories()
         {
-            var factoryMock = new Mock<ILogEventPropertyValueFactory>();
-            factoryMock
+            var scalarFactory = new Mock<ILogEventPropertyValueFactory>();
+            scalarFactory
                 .Setup(_ => _.CreatePropertyValue(It.IsAny<object>(), It.IsAny<bool>()))
                 .Returns((object o, bool isDestruct) => new ScalarValue(o));
 
-            ScalarOnlyFactory = factoryMock.Object;
+            ScalarOnlyFactory = scalarFactory.Object;
         }
 
         public static ValueFactories Instance { get; } = new();
 
         public ILogEventPropertyValueFactory ScalarOnlyFactory { get; }
+
+        internal NamedValueDestructuringPolicy EmptyPolicy => new NamedValueHandlersBuilder().BuildDestructuringPolicy();
     }
 }

@@ -1,15 +1,12 @@
 using System;
 using FluentAssertions;
-using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
 namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
 {
-    public class HandlerNegativeCasesTests
+    public class HandlerNegativeCasesTests : AbstractDestructuringTests
     {
-        private ILogEventPropertyValueFactory ScalarOnlyFactory { get; } = ValueFactories.Instance.ScalarOnlyFactory;
-
         [Theory]
         [AutoMoqData]
         public void TryDestructure_ValueHandlerThrowsException_ValueIsNotModified(DestructibleEntity value)
@@ -18,13 +15,13 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedName = nameof(value.Name);
             var maskedValue = new ScalarValue(value.Name);
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Handle(
                     maskedName,
                     new Func<string, string>(
                         _ =>
                             throw new Exception(nameof(TryDestructure_ValueHandlerThrowsException_ValueIsNotModified))))
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             LogEventPropertyValue result = null;
@@ -47,11 +44,11 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedName = nameof(value.Name);
             var maskedValue = new ScalarValue(value.Name);
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Omit(
-                    (_, _, _) =>
+                    _ =>
                         throw new Exception(nameof(TryDestructure_OmitterThrowsException_ValueIsNotOmitted)))
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             LogEventPropertyValue result = null;
@@ -74,11 +71,11 @@ namespace Serilog.Destructure.NamedValuesHandler.Tests.DestructuringTests
             var maskedName = nameof(value.Name);
             var expectedMaskedValue = new ScalarValue(value: null);
 
-            var policy = new NamedValueDestructuringPolicyBuilder()
+            var policy = new NamedValueHandlersBuilder()
                 .Handle(
                     maskedName,
                     new Func<string, string>(_ => null))
-                .Build();
+                .BuildDestructuringPolicy();
 
             // Act
             LogEventPropertyValue result = null;

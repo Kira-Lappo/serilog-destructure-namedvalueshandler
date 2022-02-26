@@ -1,103 +1,106 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Serilog.Destructure.NamedValuesHandler
 {
     public static class HandleExtensions
     {
-        public static NamedValueDestructuringPolicyBuilder Handle<TValue>(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
-            string valueName,
+        public static NamedValueHandlersBuilder Handle<TValue>(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
+            [MaybeNull]string valueName,
             Func<TValue, object> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle<TValue>(
+            return namedValueHandlersBuilder.Handle<TValue>(
                 valueName,
-                value => (true, handler.Invoke(value)));
+                value => new HandledValue(isHandled: true, handler.Invoke(value)));
         }
 
-        public static NamedValueDestructuringPolicyBuilder Handle(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
-            string valueName,
+        public static NamedValueHandlersBuilder Handle(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
+            [MaybeNull]string valueName,
             Func<object, Type, object> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle(
+            return namedValueHandlersBuilder.Handle(
                 valueName,
-                (value, valueType) => (true, handler(value, valueType)));
+                (value, valueType) => new HandledValue(isHandled: true, handler(value, valueType)));
         }
 
-        public static NamedValueDestructuringPolicyBuilder Handle(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
-            string valueName,
-            Func<object, Type, (bool, object)> handler
+        public static NamedValueHandlersBuilder Handle(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
+            [MaybeNull]string valueName,
+            Func<object, Type, HandledValue> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle(
-                (name, value, valueType) =>
+            return namedValueHandlersBuilder.Handle(
+                namedValue =>
                 {
+                    var (name, value, valueType) = namedValue;
                     if (!string.Equals(valueName, name, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return (false, value);
+                        return new HandledValue(isHandled: false, value);
                     }
 
                     return handler(value, valueType);
                 });
         }
 
-        public static NamedValueDestructuringPolicyBuilder Handle<TValue>(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
-            string valueName,
-            Func<TValue, (bool, object)> handler
+        public static NamedValueHandlersBuilder Handle<TValue>(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
+            [MaybeNull]string valueName,
+            Func<TValue, HandledValue> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle(
+            return namedValueHandlersBuilder.Handle(
                 valueName,
                 (value, valueType) =>
                 {
                     if (handler == null
                         || typeof(TValue) != valueType
-                        && typeof(TValue) != value.GetType())
+                        && typeof(TValue) != value?.GetType())
                     {
-                        return (false, value);
+                        return new HandledValue(isHandled: false, value);
                     }
 
                     return handler((TValue)value);
                 });
         }
 
-        public static NamedValueDestructuringPolicyBuilder Handle<TValue>(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
+        public static NamedValueHandlersBuilder Handle<TValue>(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
             Func<string, TValue, object> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle<TValue>((name, value) => (true, handler(name, value)));
+            return namedValueHandlersBuilder.Handle<TValue>((name, value) => new HandledValue(isHandled: true, handler(name, value)));
         }
 
-        public static NamedValueDestructuringPolicyBuilder Handle<TValue>(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
-            Func<string, TValue, (bool IsHandled, object Value)> handler
+        public static NamedValueHandlersBuilder Handle<TValue>(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
+            Func<string, TValue, HandledValue> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle(
-                (name, value, valueType) =>
+            return namedValueHandlersBuilder.Handle(
+                namedValue =>
                 {
+                    var (name, value, valueType) = namedValue;
                     if (handler == null
                         || typeof(TValue) != valueType
-                        && typeof(TValue) != value.GetType())
+                        && typeof(TValue) != value?.GetType())
                     {
-                        return (false, value);
+                        return new HandledValue(isHandled: false, value);
                     }
 
                     return handler(name, (TValue)value);
                 });
         }
 
-        public static NamedValueDestructuringPolicyBuilder Handle(
-            this NamedValueDestructuringPolicyBuilder namedValueDestructuringPolicyBuilder,
-            Func<string, object, Type, object> handler
+        public static NamedValueHandlersBuilder Handle(
+            this NamedValueHandlersBuilder namedValueHandlersBuilder,
+            Func<NamedValue, object> handler
         )
         {
-            return namedValueDestructuringPolicyBuilder.Handle((name, value, valueType) => (true, handler(name, value, valueType)));
+            return namedValueHandlersBuilder.Handle(namedValue => new HandledValue(isHandled: true, handler(namedValue)));
         }
     }
 }
